@@ -1,0 +1,171 @@
+﻿@Layout@{
+    ViewBag.Title = "Profile | EEEaTTT";
+    ViewBag.NavbarStyle = "display: block;";
+    ViewBag.HomeActive = "";
+    Layout = "/Views/Shared/__Layout.cshtml";
+}
+
+<div id="msgLabel">
+    @(new HtmlString(ViewBag.ChangeEmailHTML))
+    @(new HtmlString(ViewBag.ChangePwdHTML))
+    @(new HtmlString(ViewBag.DelAccount))
+</div>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">帳號資訊</div>
+    <div class="panel-body">
+        <p>帳號名稱：@(Session["Username"].ToString())</p>
+        <p>電子信箱：@(Session["EmailAds"].ToString())</p>
+        <p>最後登入：@(Session["LastTime"].ToString())</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel panel-info">
+            <div class="panel-heading">修改電子信箱</div>
+            <div class="panel-body">
+                @{ using (Html.BeginForm("ChangeEmail", "Member", FormMethod.Post, new { id = "change-email-form" }))
+                    {
+                        <div class="input-group">
+                            <span class="input-group-addon">請輸入目前密碼：</span>
+                            <input type="password" class="form-control" name="password" value="" placeholder="Enter your password here" aria-describedby="basic-addon1" />
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">輸入新電子信箱：</span>
+                            <input type="email" class="form-control" name="newEmail" value="" placeholder="Enter new email address here" aria-describedby="basic-addon1" />
+                        </div>
+                        <div>
+                            <input type="hidden" name="post-type" value="change-email-submit" />
+                            <input type="button" name="change-email-submit" id="change-email-submit" class="btn btn-info btn-block" onClick="changeEmail()" value="修改信箱" />
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-warning">
+            <div class="panel-heading">修改密碼</div>
+            <div class="panel-body">
+                @{ using (Html.BeginForm("ChangePwd", "Member", FormMethod.Post, new { id = "change-pwd-form" }))
+                    {
+                        <div class="input-group">
+                            <span class="input-group-addon">請輸入目前密碼：</span>
+                            <input type="password" class="form-control" name="password" value="" placeholder="Enter old password here" aria-describedby="basic-addon1" />
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">請輸入新設密碼：</span>
+                            <input type="password" class="form-control" name="newPassword" value="" placeholder="Enter new password here" aria-describedby="basic-addon1" />
+                        </div>
+                        <div>
+                            <input type="hidden" name="post-type" value="change-pwd-submit" />
+                            <input type="button" name="change-pwd-submit" id="change-pwd-submit" class="btn btn-warning btn-block" onClick="changePwd()" value="修改密碼" />
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-danger">
+            <div class="panel-heading">刪除帳號</div>
+            <div class="panel-body">
+                @{ using (Html.BeginForm("DelAccount", "Member", FormMethod.Post, new { id = "del-account-form" }))
+                    {
+                        <div class="input-group">
+                            <span class="input-group-addon">請輸入目前密碼：</span>
+                            <input type="password" class="form-control" name="password" value="" placeholder="Enter your password here" aria-describedby="basic-addon1" />
+                        </div><br>
+                        <div style="text-align: center;">
+                            <label><input type="checkbox" name="checkDelete" />我以悉知刪除帳號後資料將全數刪除</label>
+                        </div>
+                        <div>
+                            <input type="hidden" name="post-type" value="del-account-submit" />
+                            <input type="button" name="del-account-submit" id="del-account-submit" class="btn btn-danger btn-block" onClick="delAccount()" value="刪除帳號" />
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+	function changeEmail()
+	{
+		$("#msgLabel").empty();
+		if (isEmptyOrSpaces(document.getElementById("change-email-form").elements.namedItem("password").value))
+		{
+			$("#msgLabel").append('<div class="alert alert-danger" role="alert">[Failure] 目前密碼不可為空白！</div>');
+
+			document.getElementById("change-email-form").elements.namedItem("password").focus();
+			alert("目前密碼不可為空白！");
+		}
+		else if ((document.getElementById("change-email-form").elements.namedItem("newEmail").value.match(new RegExp("@(new HtmlString("@"))", "g")) || []).length != 1)
+		{
+			$("#msgLabel").append('<div class="alert alert-danger" role="alert">[Failure] 新電子信箱格式錯誤！</div>');
+
+			document.getElementById("change-email-form").elements.namedItem("newEmail").focus();
+			alert("新電子信箱格式錯誤！");
+		}
+		else
+		{
+			document.getElementById("change-email-form").submit();
+		}
+	}
+
+	function changePwd()
+	{
+		$("#msgLabel").empty();
+		if (isEmptyOrSpaces(document.getElementById("change-pwd-form").elements.namedItem("password").value))
+		{
+			$("#msgLabel").append('<div class="alert alert-danger" role="alert">[Failure] 目前密碼不可為空白！</div>');
+
+			document.getElementById("change-pwd-form").elements.namedItem("password").focus();
+			alert("目前密碼不可為空白！");
+		}
+		else if (isEmptyOrSpaces(document.getElementById("change-pwd-form").elements.namedItem("newPassword").value))
+		{
+			$("#msgLabel").append('<div class="alert alert-danger" role="alert">[Failure] 新設密碼不可為空白！</div>');
+
+			document.getElementById("change-pwd-form").elements.namedItem("newPassword").focus();
+			alert("新設密碼不可為空白！");
+		}
+		else
+		{
+			document.getElementById("change-pwd-form").submit();
+		}
+	}
+
+	function delAccount()
+	{
+		$("#msgLabel").empty();
+		if (isEmptyOrSpaces(document.getElementById("del-account-form").elements.namedItem("password").value))
+		{
+			$("#msgLabel").append('<div class="alert alert-danger" role="alert">[Failure] 目前密碼不可為空白！</div>');
+
+			document.getElementById("del-account-form").elements.namedItem("password").focus();
+			alert("目前密碼不可為空白！");
+		}
+		else if (document.getElementById("del-account-form").elements.namedItem("checkDelete").checked != true)
+		{
+			$("#msgLabel").append('<div class="alert alert-danger" role="alert">[Failure] 核取方塊需勾選後方可進行刪除動作！</div>');
+
+			document.getElementById("del-account-form").elements.namedItem("checkDelete").focus();
+			alert("核取方塊需勾選後方可進行刪除動作！");
+		}
+		else
+		{
+		    if (window.confirm("刪除完畢後網頁將自動導向至首頁，確定刪除帳號？") == true)
+			{
+				document.getElementById("del-account-form").submit();
+			}
+		}
+	}
+
+	function isEmptyOrSpaces(str)
+	{
+		return str === null || str.match(/^ *$/) !== null;
+	}
+</script>
