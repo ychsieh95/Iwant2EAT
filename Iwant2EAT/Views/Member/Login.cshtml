@@ -1,0 +1,91 @@
+﻿@model List<Iwant2EAT.Models.Member>
+@Layout@{
+    ViewBag.Title = "Login | EEEaTTT";
+    ViewBag.NavbarStyle = "display: none;";
+    ViewBag.HomeActive = "";
+    Layout = "/Views/Shared/__Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-login">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <a href="/Member/Login" class="active" id="login-form-link">登入</a>
+                        </div>
+                        <div class="col-xs-6">
+                            <a href="/Account/Register" class="" id="register-form-link">註冊</a>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <form id="login-form" action="/Member/Login" method="POST" role="form" style="display: block;">
+                                <div class="form-group">
+                                    <input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="">
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="Password">
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-sm-6 col-sm-offset-3">
+                                            <input type="hidden" name="posttype" value="login-submit" />
+                                            <input type="button" name="login-submit" id="login-submit" tabindex="3" class="form-control btn btn-login" value="馬上登入" onclick="checkLogin()" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div id="msgDiv">
+                        @(new HtmlString(ViewBag.AddMemberHTML))
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <p align='center'><a href="~/Home/Index">[返回首頁]</a></p>
+</div>
+
+<link href="~/Content/login-register.css" rel="stylesheet">
+<script type="text/javascript">
+	function checkLogin()
+	{
+		var username = document.getElementById("login-form").elements.namedItem("username").value;
+		var password = document.getElementById("login-form").elements.namedItem("password").value;
+
+		var check = true;
+		$("#msgDiv").empty();
+		if (isEmptyOrSpaces(username))
+		{
+			$("#msgDiv").append("<div class=\"alert alert-danger\" role=\"alert\">[Failure] 帳號禁止為空！</div>");
+			check = false;
+		}
+		if (isEmptyOrSpaces(password))
+		{
+			$("#msgDiv").append("<div class=\"alert alert-danger\" role=\"alert\">[Failure] 密碼禁止為空！</div>");
+			check = false;
+		}
+		if (check)
+		{
+			document.getElementById("login-form").submit();
+		}
+	}
+
+	function isValid(str)
+	{
+			return /^[a-z0-9]+$/i.test(str);
+	}
+
+	function isEmptyOrSpaces(str)
+	{
+		return str === null || str.match(/^ *$/) !== null;
+	}
+</script>
