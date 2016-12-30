@@ -1,13 +1,17 @@
 ﻿@model Iwant2EAT.Models.Store
 @Layout@{
-    ViewBag.Title = "Update | EEEaTTT";
+    ViewBag.Title = "Modify | EEEaTTT";
     ViewBag.HomeActive = "";
     Layout = "/Views/Shared/_Layout.cshtml";
 }
-<div class="container body-content">
+<div class="container">
+    <div id="msgDiv">
+        @(new HtmlString(ViewBag.AddStoreHTML))
+    </div>
+
     <div class="form-horizontal">
         @Html.AntiForgeryToken()
-        @{ using (Html.BeginForm("Update", "Store", FormMethod.Post, new { id = "add-store-info", enctype = "multipart/form-data" }))
+        @{ using (Html.BeginForm("Modify", "Store", FormMethod.Post, new { id = "add-store-info", enctype = "multipart/form-data" }))
             {
                 <div>
                     <h3><strong>更新店家</strong></h3>
@@ -105,9 +109,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="col-md-2">
-                            上傳店家圖片
-                        </div>
+                        <label class="control-label col-md-2">更新店家相片</label>
                         <div class="col-md-10">
                             <input type="file" name="file" />
                         </div>
@@ -123,10 +125,6 @@
                 </div>
             }
         }
-    </div>
-
-    <div id="msgDiv">
-        @(new HtmlString(ViewBag.AddStoreHTML))
     </div>
 </div>
 

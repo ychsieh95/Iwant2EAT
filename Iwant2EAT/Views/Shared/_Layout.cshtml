@@ -76,13 +76,20 @@
             </div>
         </div>
     </nav>
-    @RenderBody()
-    @*<div class="container body-content">
-            @RenderBody()
-            <hr />
-            <footer>
-                <p>&copy; @DateTime.Now.Year - I want EAT !!</p>
-            </footer>
-        </div>*@
+
+    <div class="container-fluid body-content">
+        @RenderBody()
+    </div>
+
+    <footer style="@ViewBag.NavbarStyle">
+        <hr />
+        <div style="text-align: center;">
+            <a href="/Home/Index">[返回首頁]</a>
+        </div>
+
+        <div style="text-align: right;">
+            <p>&copy; @DateTime.Now.Year - I want EAT !!</p>
+        </div>
+    </footer>
 </body>
 </html>

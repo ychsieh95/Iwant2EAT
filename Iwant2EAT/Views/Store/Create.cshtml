@@ -6,7 +6,7 @@
 }
 
 
-<div class="container body-content">
+<div class="container">
     <div id="msgDiv">
         @Html.Raw(new HtmlString(ViewBag.CreateStoreHtml))
     </div>
@@ -110,9 +110,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="col-md-2">
-                            上傳店家圖片
-                        </div>
+                        <label class="control-label col-md-2">上傳店家相片</label>
                         <div class="col-md-10">
                             <input type="file" name="file" />
                         </div>

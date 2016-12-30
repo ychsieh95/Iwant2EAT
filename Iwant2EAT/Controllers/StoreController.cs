@@ -90,6 +90,12 @@ namespace Iwant2EAT.Controllers
         [HttpPost]
         public ActionResult Modify(Models.Store store)
         {
+            if (string.IsNullOrEmpty(store.Name))
+            {
+                ViewBag.AddStoreHTML = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 店家名稱禁止空白！</div>";
+                return View(store);
+            }
+
             //
             store.DayOff = (store.Sunday ? "" : "0;") + (store.Monday ? "" : "1;") + (store.Tuesday ? "" : "2;") + (store.Wednesday ? "" : "3;") + (store.Thursday ? "" : "4;") + (store.Friday ? "" : "5;") + (store.Saturday ? "" : "6;");
 
@@ -200,6 +206,7 @@ namespace Iwant2EAT.Controllers
                 List<Models.Store> stores = ss.LoadAllStore().FindAll(x => x.Creater.Equals(Session["Username"].ToString()));
                 if (stores.Count > 0)
                 {
+                    ViewBag.DayOfWeek = ((int)DateTime.Now.DayOfWeek).ToString();
                     return View(stores);
                 }
                 else
