@@ -1,0 +1,198 @@
+﻿@model Iwant2EAT.Models.Store
+@Layout@{
+    ViewBag.Title = "Create | EEEaTTT";
+    ViewBag.HomeActive = "";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="container body-content">
+    <div id="msgDiv">
+        @Html.Raw(new HtmlString(ViewBag.CreateStoreHtml))
+    </div>
+
+    <div class="form-horizontal">
+        @Html.AntiForgeryToken()
+        @{ using (Html.BeginForm("Create", "Store", FormMethod.Post, new { id = "add-store-info", enctype = "multipart/form-data" }))
+            {
+                <div>
+                    <h3><strong>新增店家</strong></h3>
+                    <hr />
+
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @type = "text", @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Name, "", new { @type = "text", @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Branch, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Branch, new { htmlAttributes = new { @type = "text", @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Branch, "", new { @type = "text", @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="btn-group col-md-10">
+                            @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @type = "tel", @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Phone, "", new { @type = "tel", @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">DayOn</label>
+                        <div class="col-md-10 btn-group" data-toggle="buttons">
+                            <span class="button-checkbox">
+                                <button type="button" class="btn" data-color="primary">Sunday</button>
+                                @Html.EditorFor(model => model.Sunday, new { htmlAttributes = new { @type = "checkbox", @class = "hidden" } })
+                                @Html.ValidationMessageFor(model => model.Sunday, "", new { @type = "checkbox", @class = "text-danger" })
+                            </span>
+                            <span class="button-checkbox">
+                                <button type="button" class="btn" data-color="primary">Monday</button>
+                                @Html.EditorFor(model => model.Monday, new { htmlAttributes = new { @type = "checkbox", @class = "hidden" } })
+                                @Html.ValidationMessageFor(model => model.Monday, "", new { @type = "checkbox", @class = "text-danger" })
+                            </span>
+                            <span class="button-checkbox">
+                                <button type="button" class="btn" data-color="primary">Tuesday</button>
+                                @Html.EditorFor(model => model.Tuesday, new { htmlAttributes = new { @type = "checkbox", @class = "hidden" } })
+                                @Html.ValidationMessageFor(model => model.Tuesday, "", new { @type = "checkbox", @class = "text-danger" })
+                            </span>
+                            <span class="button-checkbox">
+                                <button type="button" class="btn" data-color="primary">Wednesday</button>
+                                @Html.EditorFor(model => model.Wednesday, new { htmlAttributes = new { @type = "checkbox", @class = "hidden" } })
+                                @Html.ValidationMessageFor(model => model.Wednesday, "", new { @type = "checkbox", @class = "text-danger" })
+                            </span>
+                            <span class="button-checkbox">
+                                <button type="button" class="btn" data-color="primary">Thursday</button>
+                                @Html.EditorFor(model => model.Thursday, new { htmlAttributes = new { @type = "checkbox", @class = "hidden" } })
+                                @Html.ValidationMessageFor(model => model.Thursday, "", new { @type = "checkbox", @class = "text-danger" })
+                            </span>
+                            <span class="button-checkbox">
+                                <button type="button" class="btn" data-color="primary">Friday</button>
+                                @Html.EditorFor(model => model.Friday, new { htmlAttributes = new { @type = "checkbox", @class = "hidden" } })
+                                @Html.ValidationMessageFor(model => model.Friday, "", new { @type = "checkbox", @class = "text-danger" })
+                            </span>
+                            <span class="button-checkbox">
+                                <button type="button" class="btn" data-color="primary">Saturday</button>
+                                @Html.EditorFor(model => model.Saturday, new { htmlAttributes = new { @type = "checkbox", @class = "hidden" } })
+                                @Html.ValidationMessageFor(model => model.Saturday, "", new { @type = "checkbox", @class = "text-danger" })
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.OpeningTime, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.OpeningTime, new { htmlAttributes = new { @type = "time", @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.OpeningTime, "", new { @type = "time", @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ClosingTime, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.ClosingTime, new { htmlAttributes = new { @type = "time", @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.ClosingTime, "", new { @type = "time", @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Address, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @type = "text", @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Address, "", new { @type = "text", @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Introduction, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Introduction, new { htmlAttributes = new { @type = "text", @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Introduction, "", new { @type = "text", @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            上傳店家圖片
+                        </div>
+                        <div class="col-md-10">
+                            <input type="file" name="file" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="新增店家" class="btn btn-success" />
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.button-checkbox').each(function () {
+
+            // Settings
+            var $widget = $(this),
+                $button = $widget.find('button'),
+                $checkbox = $widget.find('input:checkbox'),
+                color = $button.data('color'),
+                settings = {
+                    on: {
+                        icon: 'glyphicon glyphicon-check'
+                    },
+                    off: {
+                        icon: 'glyphicon glyphicon-unchecked'
+                    }
+                };
+
+            // Event Handlers
+            $button.on('click', function () {
+                $checkbox.prop('checked', !$checkbox.is(':checked'));
+                $checkbox.triggerHandler('change');
+                updateDisplay();
+            });
+            $checkbox.on('change', function () {
+                updateDisplay();
+            });
+
+            // Actions
+            function updateDisplay() {
+                var isChecked = $checkbox.is(':checked');
+
+                // Set the button's state
+                $button.data('state', (isChecked) ? "on" : "off");
+
+                // Set the button's icon
+                $button.find('.state-icon')
+                    .removeClass()
+                    .addClass('state-icon ' + settings[$button.data('state')].icon);
+
+                // Update the button's color
+                if (isChecked) {
+                    $button
+                        .removeClass('btn-default')
+                        .addClass('btn-' + color + ' active');
+                }
+                else {
+                    $button
+                        .removeClass('btn-' + color + ' active')
+                        .addClass('btn-default');
+                }
+            }
+
+            // Initialization
+            function init() {
+
+                updateDisplay();
+
+                // Inject the icon if applicable
+                if ($button.find('.state-icon').length == 0) {
+                    $button.prepend('<i class="state-icon ' + settings[$button.data('state')].icon + '"></i> ');
+                }
+            }
+            init();
+        });
+    });
+</script>

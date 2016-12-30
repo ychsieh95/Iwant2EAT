@@ -2,7 +2,7 @@
     ViewBag.Title = "Profile | EEEaTTT";
     ViewBag.NavbarStyle = "display: block;";
     ViewBag.HomeActive = "";
-    Layout = "/Views/Shared/__Layout.cshtml";
+    Layout = "/Views/Shared/_Layout.cshtml";
 }
 
 <div id="msgLabel">
@@ -20,12 +20,13 @@
     </div>
 </div>
 
-<div class="row">
+@Html.AntiForgeryToken()
+<div>
     <div class="col-md-4">
         <div class="panel panel-info">
             <div class="panel-heading">修改電子信箱</div>
             <div class="panel-body">
-                @{ using (Html.BeginForm("ChangeEmail", "Member", FormMethod.Post, new { id = "change-email-form" }))
+                @{ using (Html.BeginForm("ChangeEmail", "Member", FormMethod.Post, new { id = "change-email-form", enctype = "multipart/form-data" }))
                     {
                         <div class="input-group">
                             <span class="input-group-addon">請輸入目前密碼：</span>
@@ -48,7 +49,7 @@
         <div class="panel panel-warning">
             <div class="panel-heading">修改密碼</div>
             <div class="panel-body">
-                @{ using (Html.BeginForm("ChangePwd", "Member", FormMethod.Post, new { id = "change-pwd-form" }))
+                @{ using (Html.BeginForm("ChangePwd", "Member", FormMethod.Post, new { id = "change-pwd-form", enctype = "multipart/form-data" }))
                     {
                         <div class="input-group">
                             <span class="input-group-addon">請輸入目前密碼：</span>

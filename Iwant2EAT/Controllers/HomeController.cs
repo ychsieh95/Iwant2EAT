@@ -8,10 +8,16 @@ namespace Iwant2EAT.Controllers
 {
     public class HomeController : Controller
     {
-        // GET: Home
+        [HttpGet]
         public ActionResult Index()
         {
             return View(new Service.StoreService().LoadAllStore());
+        }
+
+        [HttpPost]
+        public ActionResult Search(string storeKeyword)
+        {
+            return View("Index", new Service.StoreService().LoadAllStore().FindAll(x=>x.Name.Contains(storeKeyword)));
         }
     }
 }

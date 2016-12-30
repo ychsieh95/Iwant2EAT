@@ -1,0 +1,87 @@
+﻿@model Iwant2EAT.Models.Store
+@Layout@{
+    ViewBag.Title = string.Format("{0} | EEEaTTT", ViewBag.StoreName);
+    ViewBag.HomeActive = "";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container body-content">
+    <div id="msgDiv">
+        @if (TempData.ContainsKey("CreateStoreHtml"))
+            {
+            @Html.Raw(new HtmlString(TempData["CreateStoreHtml"].ToString()))
+        }
+        @if (TempData.ContainsKey("UpdateStoreHtml"))
+            {
+            @Html.Raw(new HtmlString(TempData["UpdateStoreHtml"].ToString()))
+        }
+        @if (TempData.ContainsKey("DeleteStoreHtml"))
+            {
+            @Html.Raw(new HtmlString(TempData["DeleteStoreHtml"].ToString()))
+        }
+    </div>
+
+
+    <div class="form-horizontal">
+        <h3><strong>@(Model.Name)</strong> <small>@(Model.Branch)</small></h3>
+        <hr />
+
+        <div class="form-group">
+            <img data-src="holder.js/100%x200" alt="100%x200" style="height: 500px; display: block; margin-left: auto; margin-right: auto;" src="@Model.ImageUrl" data-holder-rendered="true">
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2">Phone</label>
+            <div class="col-md-10">
+                <p>@(Model.Phone)</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2">DayOn</label>
+            <div class="col-md-10">
+                <div class="col-md-10 btn-group" data-toggle="buttons">
+                    <label class="btn @(Model.DayOff.Contains("0;") ? "btn-warning" : "btn-primary")">Sunday</label>
+                    <label class="btn @(Model.DayOff.Contains("1;") ? "btn-warning" : "btn-primary")">Monday</label>
+                    <label class="btn @(Model.DayOff.Contains("2;") ? "btn-warning" : "btn-primary")">Tuesday</label>
+                    <label class="btn @(Model.DayOff.Contains("3;") ? "btn-warning" : "btn-primary")">Wednesday</label>
+                    <label class="btn @(Model.DayOff.Contains("4;") ? "btn-warning" : "btn-primary")">Thursday</label>
+                    <label class="btn @(Model.DayOff.Contains("5;") ? "btn-warning" : "btn-primary")">Friday</label>
+                    <label class="btn @(Model.DayOff.Contains("6;") ? "btn-warning" : "btn-primary")">Saturday</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2">OpeningTime</label>
+            <div class="col-md-10">
+                <p>@(Model.OpeningTime)</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2">ClosingTime</label>
+            <div class="col-md-10">
+                <p>@(Model.ClosingTime)</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2">Address</label>
+            <div class="col-md-10">
+                <p>@(Model.Address)</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2">Introduction</label>
+            <div class="col-md-10">
+                <p>@(Model.Introduction)</p>
+            </div>
+        </div>
+    </div>
+
+    @if (ViewBag.IsCreater)
+    {
+        <div style="text-align:right;">
+            <p>
+                <a href="/Store/Update?Guid=@Model.Guid" class="btn btn-info" role="button">Modify Info</a>
+                <a href="/Store/Delete?Guid=@Model.Guid" class="btn btn-danger" role="button">Delete Store</a>
+            </p>
+        </div>
+    }
+</div>

@@ -23,13 +23,25 @@
             </div>
             <div class="collapse navbar-collapse" id="navigationbar">
                 <ul class="nav navbar-nav">
-                    <li class="@ViewBag.HomeActive"><a href="#">首頁</a></li>
+                    <li class="@ViewBag.HomeActive"><a href="/Home/Index">首頁</a></li>
+                    @{if (Session.Count > 0 && Session["Username"] != null)
+                        {
+                            @(new HtmlString(string.Format("<li class=\"{0}\"><a href=\"/Store/Create\">新增店家</a></li>", ViewBag.AddStoreActive != null ? ViewBag.AddStoreActive : "")))
+                        }
+                    }
                 </ul>
-                <form class="navbar-form navbar-left" role="search">
+                @Html.AntiForgeryToken()
+                @using (Html.BeginForm("Search", "Home", FormMethod.Post, new { @class = "navbar-form navbar-left", enctype = "multipart/form-data", role = "search" }))
+                {
+                    <div class="form-group">
+                        <input name="storeKeyword" type="text" class="form-control" placeholder="搜尋店家" />
+                    </div>
+                }
+                @*<form class="navbar-form navbar-left" role="search">
                     <div class="form-group">
                         <input type="text" class="form-control" placeholder="搜尋店家">
                     </div>
-                </form>
+                </form>*@
                 @if (HttpContext.Current.Session.Count > 0)
                 {
                     if (string.IsNullOrEmpty(@HttpContext.Current.Session["Username"].ToString()))
@@ -59,17 +71,17 @@
                         <a class="btn btn-success navbar-btn" href="/Member/Register">註冊</a>
                         <a class="btn btn-default navbar-btn" href="/Member/Login">登入</a>
                     </div>
-                }
+                    }
             </div>
         </div>
     </nav>
     @RenderBody()
     @*<div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - I want EAT !!</p>
-        </footer>
-    </div>*@
+            @RenderBody()
+            <hr />
+            <footer>
+                <p>&copy; @DateTime.Now.Year - I want EAT !!</p>
+            </footer>
+        </div>*@
 </body>
 </html>

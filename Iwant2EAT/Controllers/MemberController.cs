@@ -29,6 +29,7 @@ namespace Iwant2EAT.Controllers
                     Session.Add("Username", member.Username);
                     Session.Add("EmailAds", member.Email);
                     Session.Add("LastTime", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+                    ViewBag.AddMemberHTML = "<div class=\"alert alert-success\" role=\"alert\">[Success] 帳號註冊成功！</div>";
                     return Redirect("/Home/Index");
                 }
                 else
@@ -120,7 +121,7 @@ namespace Iwant2EAT.Controllers
             
             if (memberList.Find(x => x.Username.Equals(Session["Username"].ToString())).Password.Equals(password, StringComparison.InvariantCultureIgnoreCase))
             {
-                if (ms.ChangeEmail(username: Session["Username"].ToString(), email: newEmail))
+                if (ms.UpdateMember(setCommand: string.Format("Email='{0}'", newEmail), whereCommand: string.Format("Username='{0}'", Session["Username"].ToString())))
                 {
                     ViewBag.ChangeEmailHTML = "<div class=\"alert alert-success\" role=\"alert\">[Failure] 信箱修改成功！</div>";
                 }
@@ -144,7 +145,7 @@ namespace Iwant2EAT.Controllers
 
             if (memberList.Find(x => x.Username.Equals(Session["Username"].ToString())).Password.Equals(password, StringComparison.InvariantCultureIgnoreCase))
             {
-                if (ms.ChangePassword(username: Session["Username"].ToString(), password: newPassword))
+                if (ms.UpdateMember(setCommand: string.Format("Password='{0}'", newPassword), whereCommand: string.Format("Username='{0}'", Session["Username"].ToString())))
                 {
                     ViewBag.ChangePwdHTML = "<div class=\"alert alert-success\" role=\"alert\">[Failure] 密碼修改成功！</div>";
                 }
