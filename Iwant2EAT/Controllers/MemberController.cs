@@ -18,8 +18,11 @@ namespace Iwant2EAT.Controllers
         [HttpPost]
         public ActionResult Register(Models.Member member)
         {
+            member.LastLogin = DateTime.Now;
+            member.LastIpAdr = Request.UserHostAddress;
+
             Service.MemberService ms = new Service.MemberService();
-            List<Models.Member> memberList = ms.LoadAllMember();
+            List<Models.Member> memberList = ms.LoadAllMember().FindAll(x => x.Username.Equals(member.Username));
 
             Session.Clear();
             if (memberList == null || memberList.Count <= 0)
@@ -27,8 +30,6 @@ namespace Iwant2EAT.Controllers
                 if (ms.AddMember(member))
                 {
                     Session.Add("Username", member.Username);
-                    Session.Add("EmailAds", member.Email);
-                    Session.Add("LastTime", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
                     ViewBag.AddMemberHTML = "<div class=\"alert alert-success\" role=\"alert\">[Success] 帳號註冊成功！</div>";
                     return Redirect("/Home/Index");
                 }
@@ -67,15 +68,18 @@ namespace Iwant2EAT.Controllers
         [HttpPost]
         public ActionResult Login(Models.Member member)
         {
+            member.LastLogin = DateTime.Now;
+            member.LastIpAdr = Request.UserHostAddress;
+
             Service.MemberService ms = new Service.MemberService();
             List<Models.Member> memberList = ms.LoadAllMember();
 
             Session.Clear();
             if (memberList.Any(x => x.Username.Equals(member.Username) && x.Password.Equals(member.Password)))
             {
+                // Update login time and ip
+                ms.UpdateMember(string.Format("LastLogin='{0}', LastIpAdr='{1}'", member.LastLogin.ToString("yyyy/MM/dd HH:mm:ss"), member.LastIpAdr), string.Format("Username='{0}'", member.Username));
                 Session.Add("Username", member.Username);
-                Session.Add("EmailAds", memberList.Find(x => x.Username.Equals(member.Username)).Email);
-                Session.Add("LastTime", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
                 return Redirect("/Home/Index");
             }
             else
@@ -109,6 +113,11 @@ namespace Iwant2EAT.Controllers
             }
             else
             {
+                Service.MemberService ms = new Service.MemberService();
+                Models.Member member = ms.LoadAllMember().Find(x => x.Username.Equals(Session["Username"]));
+                ViewBag.Email = member.Email;
+                ViewBag.LastLogin = member.LastLogin;
+                ViewBag.LastIpAdr = member.LastIpAdr;
                 return View();
             }
         }

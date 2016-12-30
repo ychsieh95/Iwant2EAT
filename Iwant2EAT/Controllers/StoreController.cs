@@ -18,6 +18,7 @@ namespace Iwant2EAT.Controllers
             }
             else
             {
+                ViewBag.AddStoreActive = "active";
                 return View();
             }
         }
@@ -25,6 +26,7 @@ namespace Iwant2EAT.Controllers
         [HttpPost]
         public ActionResult Create(Models.Store store)
         {
+            ViewBag.AddStoreActive = "active";
             if (string.IsNullOrEmpty(store.Name))
             {
                 ViewBag.AddStoreHTML = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 店家名稱禁止空白！</div>";
@@ -80,13 +82,13 @@ namespace Iwant2EAT.Controllers
         }
 
         [HttpGet]
-        public ActionResult Update(string Guid)
+        public ActionResult Modify(string Guid)
         {
             return View(new Service.StoreService().LoadAllStore().Find(x => x.Guid.Equals(Guid)));
         }
 
         [HttpPost]
-        public ActionResult Update(Models.Store store)
+        public ActionResult Modify(Models.Store store)
         {
             //
             store.DayOff = (store.Sunday ? "" : "0;") + (store.Monday ? "" : "1;") + (store.Tuesday ? "" : "2;") + (store.Wednesday ? "" : "3;") + (store.Thursday ? "" : "4;") + (store.Friday ? "" : "5;") + (store.Saturday ? "" : "6;");
@@ -142,8 +144,13 @@ namespace Iwant2EAT.Controllers
             }
             else
             {
+                string filePath = Request.MapPath(ss.LoadAllStore().Find(x => x.Guid.Equals(Guid)).ImageUrl);
                 if (ss.DeleteStore(Guid))
                 {
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        System.IO.File.Delete(filePath);
+                    }
                     TempData.Add("DeleteStoreHtml", "<div class=\"alert alert-success\" role=\"alert\">[success] 刪除店家資訊成功！</div>");
                     return RedirectToAction("Index", "Home");
                 }
@@ -177,6 +184,29 @@ namespace Iwant2EAT.Controllers
                 }
                 ViewBag.StoreName = store.Name + (string.IsNullOrEmpty(store.Branch) ? "" : string.Format(" ({0})", store.Branch));
                 return View(store);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult MyStore()
+        {
+            if (Session.Count <= 0 || Session["Username"] == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                Service.StoreService ss = new Service.StoreService();
+                List<Models.Store> stores = ss.LoadAllStore().FindAll(x => x.Creater.Equals(Session["Username"].ToString()));
+                if (stores.Count > 0)
+                {
+                    return View(stores);
+                }
+                else
+                {
+                    ViewBag.SearchHtml = "<div class=\"alert alert-info\" role=\"alert\">[Info] 無任何已建立之店家資訊！</div>";
+                    return View();
+                }
             }
         }
     }

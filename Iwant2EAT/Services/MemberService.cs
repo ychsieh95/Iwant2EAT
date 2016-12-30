@@ -19,7 +19,9 @@ namespace Iwant2EAT.Service
                 {
                     Username = reader["Username"].ToString(),
                     Password = reader["Password"].ToString(),
-                    Email = reader["Email"].ToString()
+                    Email = reader["Email"].ToString(),
+                    LastLogin =(DateTime)reader["LastLogin"],
+                    LastIpAdr = reader["LastIpAdr"].ToString()
                 });
             }
             connection.Close();
@@ -30,7 +32,8 @@ namespace Iwant2EAT.Service
         {
             var connection = new System.Data.SqlClient.SqlConnection(@"Data Source=.; Initial Catalog=Iwant2EAT; Integrated Security=True");
             connection.Open();
-            return (new System.Data.SqlClient.SqlCommand(string.Format("INSERT INTO Member (Username, Password, Email) VALUES ('{0}', '{1}', '{2}');", member.Username, member.Password, member.Email), connection).ExecuteNonQuery() > 0);
+            return (new System.Data.SqlClient.SqlCommand(string.Format("INSERT INTO Member (Username, Password, Email, LastLogin, LastIpAdr) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}');",
+                                                                       member.Username, member.Password, member.Email, member.LastLogin.ToString("yyyy/MM/dd HH:mm:ss"), member.LastIpAdr), connection).ExecuteNonQuery() > 0);
         }
 
         public bool UpdateMember(string setCommand, string whereCommand)

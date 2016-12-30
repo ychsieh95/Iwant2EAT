@@ -175,7 +175,8 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Store\Create.cshtml" />
     <Content Include="Views\Store\Detail.cshtml" />
-    <Content Include="Views\Store\Update.cshtml" />
+    <Content Include="Views\Store\Modify.cshtml" />
+    <Content Include="Views\Store\MyStore.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -14,9 +14,10 @@
 <div class="panel panel-primary">
     <div class="panel-heading">帳號資訊</div>
     <div class="panel-body">
-        <p>帳號名稱：@(Session["Username"].ToString())</p>
-        <p>電子信箱：@(Session["EmailAds"].ToString())</p>
-        <p>最後登入：@(Session["LastTime"].ToString())</p>
+        <p>帳號　　名稱：@(Session["Username"].ToString())</p>
+        <p>電子　　信箱：@(ViewBag.Email)</p>
+        <p>最後登入時間：@(ViewBag.LastLogin)</p>
+        <p>最後登入ＩＰ：@(ViewBag.LastIpAdr)</p>
     </div>
 </div>
 

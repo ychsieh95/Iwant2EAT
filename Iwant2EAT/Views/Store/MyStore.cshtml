@@ -1,10 +1,13 @@
 ﻿@model List<Iwant2EAT.Models.Store>
 @Layout@{
-    ViewBag.Title = "Home | EEEaTTT";
+    ViewBag.Title = "MyStore | EEEaTTT";
     ViewBag.HomeActive = "active";
     Layout = "/Views/Shared/_Layout.cshtml";
 }
 
+<div id="msgDiv">
+    @(new HtmlString(ViewBag.SearchHtml))
+</div>
 <div>
     @foreach (Iwant2EAT.Models.Store store in Model)
     {
@@ -16,17 +19,14 @@
                     <p>電話：@store.Phone</p>
                     <p>地址：@store.Address</p>
                     <p>營業時間：@(string.Format("{0} - {1}", store.OpeningTime, store.ClosingTime))</p>
-                    <p>店家介紹：@if (store.Introduction.Length > 20) { @(store.Introduction.Remove(20) + " ... (Continue)")} else { @store.Introduction }</p>
+                    <p>店家介紹：@if (store.Introduction.Length > 20)
+                    { @(store.Introduction.Remove(20) + " ... (Continue)")}
+                    else
+                    { @store.Introduction }</p>
                     <p align="right">
                         <a href="/Store/Detail?Guid=@store.Guid" class="btn btn-primary" role="button">Learn more</a>
-                        @if (Session["Username"] != null)
-                        {
-                            if (Session["Username"].ToString().Equals(store.Creater))
-                            {
-                                <a href="/Store/Modify?Guid=@store.Guid" class="btn btn-info" role="button">Modify Info</a>
-                                <a href="/Store/Delete?Guid=@store.Guid" class="btn btn-danger" role="button">Delete Store</a>
-                            }
-                        }
+                        <a href="/Store/Modify?Guid=@store.Guid" class="btn btn-info" role="button">Modify Info</a>
+                        <a href="/Store/Delete?Guid=@store.Guid" class="btn btn-danger" role="button">Delete Store</a>
                     </p>
                 </div>
             </div>
