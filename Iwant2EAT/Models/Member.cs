@@ -17,7 +17,7 @@ namespace Iwant2EAT.Models
         /// 檢查是否為正確的 Member 格式，正確則回傳 null，錯誤則回傳 HTML 標籤
         /// </summary>
         /// <returns></returns>
-        public string CheckMember()
+        public string CheckMemberFormat()
         {
             if (!(IsNumandEG(Username) && IsNumandEG(Password)))
             {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Iwant2EAT.Services
 {
@@ -19,6 +20,7 @@ namespace Iwant2EAT.Services
                 {
                     Name = reader["Name"].ToString(),
                     Branch = reader["Branch"].ToString(),
+                    Type = reader["Type"].ToString(),
                     Phone = reader["Phone"].ToString(),
                     DayOff = reader["DayOff"].ToString(),
                     OpeningTime = (TimeSpan)reader["Openingtime"],
@@ -35,7 +37,8 @@ namespace Iwant2EAT.Services
                     Thursday = !reader["DayOff"].ToString().Contains("4;"),
                     Friday = !reader["DayOff"].ToString().Contains("5;"),
                     Saturday = !reader["DayOff"].ToString().Contains("6;"),
-                    Collect = !string.IsNullOrEmpty(Username) && (ls.LoadAllCollect().Find(x => x.Username.Equals(Username) && x.Guid.Equals(reader["Guid"].ToString())) != null)
+                    Collect = !string.IsNullOrEmpty(Username) && (ls.LoadAllCollect().Find(x => x.Username.Equals(Username) && x.Guid.Equals(reader["Guid"].ToString())) != null),
+                    CollectCount = ls.LoadAllCollect().FindAll(x=>x.Guid.Equals(reader["Guid"].ToString())).Count
                 });
             }
             connection.Close();
@@ -46,15 +49,15 @@ namespace Iwant2EAT.Services
         {
             var connection = new System.Data.SqlClient.SqlConnection(@"Data Source=.; Initial Catalog=Iwant2EAT; Integrated Security=True");
             connection.Open();
-            if (LoadAllStore().FindAll(x => x.Name.Equals(store.Name) && x.Branch.Equals(store.Branch)).Count > 0)
+            if (LoadAllStore().Any(x => x.Name.Equals(store.Name) && x.Branch.Equals(store.Branch)))
             {
                 return false;
             }
             else
             {
-                return (new System.Data.SqlClient.SqlCommand(string.Format("INSERT INTO Store ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}) VALUES ('{11}', '{12}', '{13}', '{14}', '{15}', '{16}', '{17}', '{18}', '{19}', '{20}', '{21}');",
-                                                                           "Name", "Branch", "Phone", "DayOff", "OpeningTime", "ClosingTime", "Address", "Introduction", "ImageUrl", "Creater", "Guid",
-                                                                           store.Name, store.Branch, store.Phone, store.DayOff, store.OpeningTime, store.ClosingTime, store.Address, store.Introduction, store.ImageUrl, store.Creater, store.Guid),
+                return (new System.Data.SqlClient.SqlCommand(string.Format("INSERT INTO Store ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}) VALUES ('{12}', '{13}', '{14}', '{15}', '{16}', '{17}', '{18}', '{19}', '{20}', '{21}', '{22}', '{23}');",
+                                                                           "Name", "Branch", "Type", "Phone", "DayOff", "OpeningTime", "ClosingTime", "Address", "Introduction", "ImageUrl", "Creater", "Guid",
+                                                                           store.Name, store.Branch, store.Type, store.Phone, store.DayOff, store.OpeningTime, store.ClosingTime, store.Address, store.Introduction, store.ImageUrl, store.Creater, store.Guid),
                                                              connection).ExecuteNonQuery() > 0);
             }
         }
@@ -63,9 +66,10 @@ namespace Iwant2EAT.Services
         {
             var connection = new System.Data.SqlClient.SqlConnection(@"Data Source=.; Initial Catalog=Iwant2EAT; Integrated Security=True");
             connection.Open();
-            return (new System.Data.SqlClient.SqlCommand(string.Format("UPDATE Store SET {0}='{10}', {1}='{11}', {2}='{12}', {3}='{13}', {4}='{14}', {5}='{15}', {6}='{16}', {7}='{17}', {8}='{18}' WHERE Guid='{9}';",
-                                                                       "Name", "Branch", "Phone", "DayOff", "OpeningTime", "ClosingTime", "Address", "Introduction", "ImageUrl",
-                                                                       store.Guid, store.Name, store.Branch, store.Phone, store.DayOff, store.OpeningTime, store.ClosingTime, store.Address, store.Introduction, store.ImageUrl),
+            return (new System.Data.SqlClient.SqlCommand(string.Format("UPDATE Store SET {1}='{11}', {2}='{12}', {3}='{13}', {4}='{14}', {5}='{15}', {6}='{16}', {7}='{17}', {8}='{18}', {9}='{19}', {10}='{20}' WHERE Guid='{0}';",
+                                                                       store.Guid,
+                                                                       "Name", "Branch", "Type", "Phone", "DayOff", "OpeningTime", "ClosingTime", "Address", "Introduction", "ImageUrl",
+                                                                       store.Name, store.Branch, store.Type, store.Phone, store.DayOff, store.OpeningTime, store.ClosingTime, store.Address, store.Introduction, store.ImageUrl),
                                                          connection).ExecuteNonQuery() > 0);
 
         }

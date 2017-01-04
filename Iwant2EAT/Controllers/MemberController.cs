@@ -14,9 +14,10 @@ namespace Iwant2EAT.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Register(Models.Member member)
         {
-            string checkMsg = member.CheckMember();
+            string checkMsg = member.CheckMemberFormat();
             if (!string.IsNullOrEmpty(checkMsg))
             {
                 ViewBag.AddMemberHTML = checkMsg;
@@ -71,9 +72,10 @@ namespace Iwant2EAT.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Login(Models.Member member)
         {
-            string checkMsg = member.CheckMember();
+            string checkMsg = member.CheckMemberFormat();
             if (!string.IsNullOrEmpty(checkMsg))
             {
                 ViewBag.AddMemberHTML = checkMsg;
@@ -135,6 +137,7 @@ namespace Iwant2EAT.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult ChangeEmail(string password, string newEmail)
         {
             Services.MemberService ms = new Services.MemberService();
@@ -144,21 +147,22 @@ namespace Iwant2EAT.Controllers
             {
                 if (ms.UpdateMember(setCommand: string.Format("Email='{0}'", newEmail), whereCommand: string.Format("Username='{0}'", Session["Username"].ToString())))
                 {
-                    ViewBag.ChangeEmailHTML = "<div class=\"alert alert-success\" role=\"alert\">[Failure] 信箱修改成功！</div>";
+                    TempData["ChangeEmailHTML"] = "<div class=\"alert alert-success\" role=\"alert\">[Failure] 信箱修改成功！</div>";
                 }
                 else
                 {
-                    ViewBag.ChangeEmailHTML = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 信箱修改失敗！</div>";
+                    TempData["ChangeEmailHTML"] = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 信箱修改失敗！</div>";
                 }
             }
             else
             {
-                ViewBag.ChangeEmailHTML = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 密碼驗證錯誤！</div>";
+                TempData["ChangeEmailHTML"] = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 密碼驗證錯誤！</div>";
             }
-            return View("Profile");
+            return RedirectToAction("Profile");
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult ChangePwd(string password, string newPassword)
         {
             Services.MemberService ms = new Services.MemberService();
@@ -168,21 +172,22 @@ namespace Iwant2EAT.Controllers
             {
                 if (ms.UpdateMember(setCommand: string.Format("Password='{0}'", newPassword), whereCommand: string.Format("Username='{0}'", Session["Username"].ToString())))
                 {
-                    ViewBag.ChangePwdHTML = "<div class=\"alert alert-success\" role=\"alert\">[Failure] 密碼修改成功！</div>";
+                    TempData["ChangePwdHTML"] = "<div class=\"alert alert-success\" role=\"alert\">[Failure] 密碼修改成功！</div>";
                 }
                 else
                 {
-                    ViewBag.ChangePwdHTML = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 密碼修改失敗！</div>";
+                    TempData["ChangePwdHTML"] = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 密碼修改失敗！</div>";
                 }
             }
             else
             {
-                ViewBag.ChangePwdHTML = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 密碼驗證錯誤！</div>";
+                TempData["ChangePwdHTML"] = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 密碼驗證錯誤！</div>";
             }
-            return View("Profile");
+            return RedirectToAction("Profile");
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult DelAccount(string password)
         {
             Services.MemberService ms = new Services.MemberService();
@@ -215,14 +220,14 @@ namespace Iwant2EAT.Controllers
                 }
                 else
                 {
-                    ViewBag.DelAccount = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 帳戶刪除失敗！</div>";
+                    TempData["DelAccount"] = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 帳戶刪除失敗！</div>";
                 }
             }
             else
             {
-                ViewBag.DelAccount = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 密碼驗證錯誤！</div>";
+                TempData["DelAccount"] = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 密碼驗證錯誤！</div>";
             }
-            return View("Profile");
+            return RedirectToAction("Profile");
         }
     }
 }

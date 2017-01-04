@@ -29,17 +29,6 @@
     <div class="form-horizontal">
         <h3>
             <strong>@(Model.Name)</strong> <small>@(Model.Branch)</small>
-            @if (Session["Username"] != null)
-            {
-                if (Model.Collect)
-                {
-                    <a href="/Store/Collect?Guid=@Model.Guid&Collect=false"><img src="~/Content/Image/star.png" /></a>
-                }
-                else
-                {
-                    <a href="/Store/Collect?Guid=@Model.Guid&Collect=true"><img src="~/Content/Image/star_empty.png" /></a>
-                }
-            }
         </h3>
         <hr />
 
@@ -47,13 +36,19 @@
             <img data-src="holder.js/100%x200" alt="哎呀！圖片呢？" style="height: 500px; display: block; margin-left: auto; margin-right: auto;" src="@Model.ImageUrl" data-holder-rendered="true">
         </div>
         <div class="form-group">
-            <label class="control-label col-md-2">Phone</label>
+            <label class="control-label col-md-2">用餐類型</label>
+            <div class="col-md-10">
+                <p>@(Model.Type)</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2">聯絡電話</label>
             <div class="col-md-10">
                 <p>@(Model.Phone)</p>
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label col-md-2">DayOn</label>
+            <label class="control-label col-md-2">開店日期</label>
             <div class="col-md-10">
                 <div class="col-md-10 btn-group" data-toggle="buttons">
                     <label class="btn @(Model.DayOff.Contains("0;") ? "btn-warning" : "btn-primary")">Sunday</label>
@@ -67,25 +62,25 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label col-md-2">OpeningTime</label>
+            <label class="control-label col-md-2">開店時間</label>
             <div class="col-md-10">
                 <p>@(Model.OpeningTime.ToString(@"hh\:mm"))</p>
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label col-md-2">ClosingTime</label>
+            <label class="control-label col-md-2">閉店時間</label>
             <div class="col-md-10">
                 <p>@(Model.ClosingTime.ToString(@"hh\:mm"))</p>
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label col-md-2">Address</label>
+            <label class="control-label col-md-2">地址</label>
             <div class="col-md-10">
                 <p><a href="https://www.google.com.tw/maps/place/@Model.Address" target="_blank">@(Model.Address)</a></p>
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label col-md-2">Introduction</label>
+            <label class="control-label col-md-2">店家介紹</label>
             <div class="col-md-10">
                 <p>@(Model.Introduction)</p>
             </div>
@@ -97,8 +92,25 @@
     {
         <div style="text-align:right;">
             <p>
-                <a href="/Store/Modify?Guid=@Model.Guid" class="btn btn-info" role="button">Modify Info</a>
-                <a href="/Store/Delete?Guid=@Model.Guid" class="btn btn-danger" role="button">Delete Store</a>
+                @if (Session["Username"] != null)
+                {
+                    if (Model.Collect)
+                    {
+                        <a href="@Url.Action("Collect", "Store", new { Guid = Model.Guid, Collect = false})" class="btn btn-primary" style="text-align: right">
+                            <img src="~/Content/Image/star.png" width="20" height="20" style="display: inline-block;" />
+                            <span class="badge"> @Model.CollectCount</span>
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("Collect", "Store", new { Guid = Model.Guid, Collect = true})" class="btn btn-default" style="text-align: right">
+                            <img src="~/Content/Image/star_empty.png" width="20" height="20" style="display: inline-block;" />
+                            <span class="badge"> @Model.CollectCount</span>
+                        </a>
+                    }
+                }
+                <a href="@Url.Action("Modify", "Store", new { Guid = @Model.Guid })" class="btn btn-info" role="button">Modify Info</a>
+                <a href="@Url.Action("Delete", "Store", new { Guid = @Model.Guid })" class="btn btn-danger" role="button">Delete Store</a>
             </p>
         </div>
     }

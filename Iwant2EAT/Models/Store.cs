@@ -7,8 +7,9 @@ namespace Iwant2EAT.Models
     public class Store
     {
         public string Name { get; set; }
-
         public string Branch { get; set; }
+
+        public string Type { get; set; }
 
         public string Phone { get; set; }
 
@@ -35,9 +36,10 @@ namespace Iwant2EAT.Models
         public string Guid { get; set; }
 
         public bool Collect { get; set; }
+        public int CollectCount { get; set; }
 
 
-        public string CheckStore()
+        public string CheckStoreFormat()
         {
             if (string.IsNullOrEmpty(Name))
             {
@@ -50,6 +52,10 @@ namespace Iwant2EAT.Models
             if (StringUTF8Bytes(Branch) > 50)
             {
                 return ("<div class=\"alert alert-danger\" role=\"alert\">[Failure] 分店名稱不可超過 100 字元（中文字佔 2 字元）！</div>");
+            }
+            if (StringUTF8Bytes(Type) > 50)
+            {
+                return ("<div class=\"alert alert-danger\" role=\"alert\">[Failure] 用餐類別不可超過 100 字元（中文字佔 2 字元）！</div>");
             }
             if (StringUTF8Bytes(Phone) > 50)
             {
@@ -73,7 +79,7 @@ namespace Iwant2EAT.Models
         /// <returns></returns>
         public int StringUTF8Bytes(string myString)
         {
-            return Encoding.GetEncoding("utf-8").GetBytes(myString).Length;
+            return (string.IsNullOrEmpty(myString) ? 0 : Encoding.GetEncoding("utf-8").GetBytes(myString).Length);
         }
     }
 }

@@ -19,22 +19,22 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a href="#" class="navbar-brand">EEEaTTT</a>
+                <a href="@Url.Action("Index", "Home")" class="navbar-brand">EEEaTTT</a>
             </div>
             <div class="collapse navbar-collapse" id="navigationbar">
                 <ul class="nav navbar-nav">
-                    <li class="@ViewBag.HomeActive"><a href="/Home/Index">首頁</a></li>
+                    <li class="@ViewBag.HomeActive"><a href="@Url.Action("Index", "Home")">首頁</a></li>
                     @{if (Session["Username"] != null)
                         {
                             @(new HtmlString(string.Format("<li class=\"{0}\"><a href=\"/Store/Create\">新增店家</a></li>", ViewBag.AddStoreActive != null ? ViewBag.AddStoreActive : "")))
                         }
                     }
                 </ul>
-                @Html.AntiForgeryToken()
-                @using (Html.BeginForm("Search", "Home", FormMethod.Post, new { @class = "navbar-form navbar-left", enctype = "multipart/form-data", role = "search" }))
+                @using (Html.BeginForm("Search", "Home", FormMethod.Get, new { @class = "navbar-form navbar-left", enctype = "multipart/form-data", role = "search" }))
                 {
                     <div class="form-group">
-                        <input name="storeKeyword" type="text" class="form-control" placeholder="搜尋店家" />
+                        <input name="Keyword" type="text" class="form-control" placeholder="搜尋店家" />
+                        <input name="Findway" type="hidden" value="Name" />
                     </div>
                 }
                 @if (HttpContext.Current.Session.Count > 0)
@@ -42,8 +42,8 @@
                     if (string.IsNullOrEmpty(@HttpContext.Current.Session["Username"].ToString()))
                     {
                         <div class="nav navbar-nav navbar-right">
-                            <a class="btn btn-success navbar-btn" href="/Member/Register">註冊</a>
-                            <a class="btn btn-default navbar-btn" href="/Member/Login">登入</a>
+                            <a class="btn btn-success navbar-btn" href="@Url.Action("Rigister", "Member")">註冊</a>
+                            <a class="btn btn-default navbar-btn" href="@Url.Action("Login", "Member")">登入</a>
                         </div>
                     }
                     else
@@ -52,11 +52,11 @@
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">你好，@HttpContext.Current.Session["Username"].ToString()<span class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu">
-                                    <li><a href="/Store/MyStore">我的店家</a></li>
-                                    <li><a href="/Store/MyCollect">我的收藏</a></li>
-                                    <li><a href="/Member/Profile">帳戶</a></li>
+                                    <li><a href="@Url.Action("MyStore", "Store")">我的店家</a></li>
+                                    <li><a href="@Url.Action("MyStore", "MyCollect")">我的收藏</a></li>
+                                    <li><a href="@Url.Action("MyStore", "Profile")">帳戶</a></li>
                                     <li class="divider"></li>
-                                    <li><a href="/Member/Logout">登出</a></li>
+                                    <li><a href="@Url.Action("Logout", "Member")">登出</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -65,8 +65,8 @@
                 else
                 {
                     <div class="nav navbar-nav navbar-right">
-                        <a class="btn btn-success navbar-btn" href="/Member/Register">註冊</a>
-                        <a class="btn btn-default navbar-btn" href="/Member/Login">登入</a>
+                        <a class="btn btn-success navbar-btn" href="@Url.Action("Rigister", "Member")">註冊</a>
+                        <a class="btn btn-default navbar-btn" href="@Url.Action("Login", "Member")">登入</a>
                     </div>
                     }
             </div>

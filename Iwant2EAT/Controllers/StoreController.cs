@@ -25,10 +25,11 @@ namespace Iwant2EAT.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Create(Models.Store store)
         {
             ViewBag.AddStoreActive = "active";
-            string checkStore = store.CheckStore();
+            string checkStore = store.CheckStoreFormat();
             if (!string.IsNullOrEmpty(checkStore))
             {
                 ViewBag.CreateStoreHtml = checkStore;
@@ -42,26 +43,8 @@ namespace Iwant2EAT.Controllers
             // Only id of store
             store.Guid = Guid.NewGuid().ToString();
 
-            if (Request.Files.Count > 0 && Request.Files[0].ContentLength > 0)
-            {
-                var file = Request.Files[0];
-                string dir = string.Format("~/Content/Image/");
-
-                // Check dir is exits or not. if not, create it
-                var trueDir = System.Web.Hosting.HostingEnvironment.MapPath(dir);
-                if (!System.IO.Directory.Exists(trueDir))
-                {
-                    System.IO.Directory.CreateDirectory(trueDir);
-                }
-
-                // Save file
-                string fileName = store.Guid + file.FileName.Remove(0, file.FileName.LastIndexOf('.'));
-                file.SaveAs(System.IO.Path.Combine(trueDir, fileName));
-
-                store.ImageUrl = this.Url.Content(System.IO.Path.Combine(dir, fileName));
-            }
-
             Services.StoreService ss = new Services.StoreService();
+            //Check Duplicate
             if (ss.LoadAllStore().Any(x => x.Name.Equals(store.Name) && x.Branch.Equals(store.Branch)))
             {
                 ViewBag.CreateStoreHtml = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 已有重複店家資訊！</div>";
@@ -69,6 +52,25 @@ namespace Iwant2EAT.Controllers
             }
             else
             {
+                if (Request.Files.Count > 0 && Request.Files[0].ContentLength > 0)
+                {
+                    var file = Request.Files[0];
+                    string dir = string.Format("~/Content/Image/");
+
+                    // Check dir is exits or not. if not, create it
+                    var trueDir = System.Web.Hosting.HostingEnvironment.MapPath(dir);
+                    if (!System.IO.Directory.Exists(trueDir))
+                    {
+                        System.IO.Directory.CreateDirectory(trueDir);
+                    }
+
+                    // Save file
+                    string fileName = store.Guid + file.FileName.Remove(0, file.FileName.LastIndexOf('.'));
+                    file.SaveAs(System.IO.Path.Combine(trueDir, fileName));
+
+                    store.ImageUrl = this.Url.Content(System.IO.Path.Combine(dir, fileName));
+                }
+
                 if (ss.AddStore(store))
                 {
                     // 導向到詳細頁面
@@ -90,35 +92,14 @@ namespace Iwant2EAT.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Modify(Models.Store store)
         {
-            string checkStore = store.CheckStore();
+            string checkStore = store.CheckStoreFormat();
             if (!string.IsNullOrEmpty(checkStore))
             {
                 ViewBag.ModifyStoreHTML = checkStore;
                 return View(store);
-            }
-
-            //
-            store.DayOff = (store.Sunday ? "" : "0;") + (store.Monday ? "" : "1;") + (store.Tuesday ? "" : "2;") + (store.Wednesday ? "" : "3;") + (store.Thursday ? "" : "4;") + (store.Friday ? "" : "5;") + (store.Saturday ? "" : "6;");
-
-            if (Request.Files.Count > 0 && Request.Files[0].ContentLength > 0)
-            {
-                var file = Request.Files[0];
-                string dir = string.Format("~/Content/Image/");
-
-                // Check dir is exits or not. if not, create it
-                var trueDir = System.Web.Hosting.HostingEnvironment.MapPath(dir);
-                if (!System.IO.Directory.Exists(trueDir))
-                {
-                    System.IO.Directory.CreateDirectory(trueDir);
-                }
-
-                // Save file
-                string fileName = store.Guid + file.FileName.Remove(0, file.FileName.LastIndexOf('.'));
-                file.SaveAs(System.IO.Path.Combine(trueDir, fileName));
-
-                store.ImageUrl = this.Url.Content(System.IO.Path.Combine(dir, fileName));
             }
 
             Services.StoreService ss = new Services.StoreService();
@@ -129,6 +110,35 @@ namespace Iwant2EAT.Controllers
             }
             else
             {
+                //
+                store.DayOff = (store.Sunday ? "" : "0;") + (store.Monday ? "" : "1;") + (store.Tuesday ? "" : "2;") + (store.Wednesday ? "" : "3;") + (store.Thursday ? "" : "4;") + (store.Friday ? "" : "5;") + (store.Saturday ? "" : "6;");
+                //
+                if (Request.Files.Count > 0 && Request.Files[0].ContentLength > 0)
+                {
+                    var file = Request.Files[0];
+                    string dir = string.Format("~/Content/Image/");
+
+                    // Check dir is exits or not. if not, create it
+                    var trueDir = System.Web.Hosting.HostingEnvironment.MapPath(dir);
+                    if (!System.IO.Directory.Exists(trueDir))
+                    {
+                        System.IO.Directory.CreateDirectory(trueDir);
+                    }
+
+                    // Save file
+                    string fileName = store.Guid + file.FileName.Remove(0, file.FileName.LastIndexOf('.'));
+                    file.SaveAs(System.IO.Path.Combine(trueDir, fileName));
+
+                    store.ImageUrl = this.Url.Content(System.IO.Path.Combine(dir, fileName));
+                }
+                // Check Duplicate
+                if (ss.LoadAllStore().Any(x => x.Name.Equals(store.Name) && x.Branch.Equals(store.Branch) && !x.Guid.Equals(store.Guid)))
+                {
+                    ViewBag.ModifyStoreHtml = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 已有重複店家資訊！</div>";
+                    return View(store);
+                }
+
+                //
                 if (ss.UpdateStore(store))
                 {
                     TempData["ModifyStoreHtml"] = "<div class=\"alert alert-success\" role=\"alert\">[Success] 更新店家資訊成功！</div>";
@@ -155,7 +165,6 @@ namespace Iwant2EAT.Controllers
             }
             else
             {
-                
                 string filePath = Request.MapPath(store.ImageUrl);
                 if (ss.DeleteStore(Guid))
                 {
@@ -193,7 +202,8 @@ namespace Iwant2EAT.Controllers
             else
             {
                 Services.StoreService ss = new Services.StoreService();
-                Models.Store store = ss.LoadAllStore(Session["Username"].ToString()).Find(x => x.Guid.Equals(Guid));
+                Models.Store store = 
+                    ss.LoadAllStore(Session["Username"] == null ? "" : Session["Username"].ToString()).Find(x => x.Guid.Equals(Guid));
 
                 ViewBag.IsCreater = false;
                 if (Session["Username"] != null)

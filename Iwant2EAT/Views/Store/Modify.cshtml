@@ -10,9 +10,9 @@
     </div>
 
     <div class="form-horizontal">
-        @Html.AntiForgeryToken()
         @{ using (Html.BeginForm("Modify", "Store", FormMethod.Post, new { id = "modify-store-info", enctype = "multipart/form-data" }))
             {
+                @Html.AntiForgeryToken()
                 <div>
                     <h3><strong>更新店家</strong></h3>
                     <hr />
@@ -21,21 +21,30 @@
                     <div class="form-group">
                         @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @type = "text", @class = "form-control", disable = true } })
+                            <!-- EditorFor 加上 disabled 後就會無法返值，故必須新增一 hidden 欄位用以儲存資訊 -->
+                            @Html.HiddenFor(model => model.Name)
+                            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @type = "text", @class = "form-control", @placeholder = "店家名稱，不可空白", disabled = "disabled", @readonly = "readonly" } })
                             @Html.ValidationMessageFor(model => model.Name, "", new { @type = "text", @class = "text-danger" })
                         </div>
                     </div>
                     <div class="form-group">
                         @Html.LabelFor(model => model.Branch, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            @Html.EditorFor(model => model.Branch, new { htmlAttributes = new { @type = "text", @class = "form-control", disable = true } })
+                            @Html.EditorFor(model => model.Branch, new { htmlAttributes = new { @type = "text", @class = "form-control", @placeholder = "分店名稱，若無請留白" } })
                             @Html.ValidationMessageFor(model => model.Branch, "", new { @type = "text", @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Type, new { htmlAttributes = new { @type = "text", @class = "form-control", @placeholder = "用餐類型，如：吃到飽、火鍋、簡餐、燒肉等" } })
+                            @Html.ValidationMessageFor(model => model.Type, "", new { @type = "text", @class = "text-danger" })
                         </div>
                     </div>
                     <div class="form-group">
                         @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="btn-group col-md-10">
-                            @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @type = "tel", @class = "form-control" } })
+                            @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @type = "tel", @class = "form-control", @placeholder = "店家聯絡電話，若無請留白" } })
                             @Html.ValidationMessageFor(model => model.Phone, "", new { @type = "tel", @class = "text-danger" })
                         </div>
                     </div>
@@ -96,26 +105,25 @@
                     <div class="form-group">
                         @Html.LabelFor(model => model.Address, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @type = "text", @class = "form-control" } })
+                            @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @type = "text", @class = "form-control", @placeholder = "店家地址" } })
                             @Html.ValidationMessageFor(model => model.Address, "", new { @type = "text", @class = "text-danger" })
                         </div>
                     </div>
                     <div class="form-group">
                         @Html.LabelFor(model => model.Introduction, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            @Html.EditorFor(model => model.Introduction, new { htmlAttributes = new { @type = "text", @class = "form-control" } })
-                            @Html.HiddenFor(model => model.ImageUrl)
+                            @Html.EditorFor(model => model.Introduction, new { htmlAttributes = new { @type = "text", @class = "form-control", @placeholder = "店家介紹" } })
                             @Html.ValidationMessageFor(model => model.Introduction, "", new { @type = "text", @class = "text-danger" })
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-md-2">更新店家相片</label>
                         <div class="col-md-10">
+                            @Html.HiddenFor(model => model.ImageUrl)
                             <input type="file" name="file" />
                         </div>
                     </div>
                 </div>
-
                 @Html.HiddenFor(model => model.Creater)
                 @Html.HiddenFor(model => model.Guid)
                 <div class="form-group">
@@ -194,4 +202,14 @@
             init();
         });
     });
+</script>
+
+<script type="text/javascript">
+        $(function () {
+            $('input[name="Branch"]').rules('add', {
+                messages: {
+                    required: "請至少選擇一個分類"
+                }
+            });
+        });
 </script>

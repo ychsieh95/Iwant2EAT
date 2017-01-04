@@ -31,21 +31,33 @@
                 <div class="thumbnail">
                     <img data-src="holder.js/100%x200" alt="100%x200" style="height: 300px; width: 100%; display: block;" src="@Model[i].ImageUrl" data-holder-rendered="true">
                     <div class="caption">
-                        <h3>
-                            <strong>@Model[i].Name</strong><small>@(string.IsNullOrEmpty(@Model[i].Branch) ? "" : string.Format(" ({0})", @Model[i].Branch))</small>
+                        <div style="float: left;">
+                            <h3><strong>@Model[i].Name</strong><small>@(string.IsNullOrEmpty(@Model[i].Branch) ? "" : string.Format(" ({0})", @Model[i].Branch))</small></h3>
+                        </div>
+                        <div style="float: right;">
                             @if (Model[i].Collect)
                             {
-                                <a href="@Url.Action("Collect", new { Guid = Model[i].Guid, Collect = false, Rurl = "Store/MyCollect"})"><img src="~/Content/Image/star.png" align="right" /></a>
+                                <a href="@Url.Action("Collect", "Store", new { Guid = Model[i].Guid, Collect = false, Rurl = "Store/MyCollect"})" class="btn btn-primary" style="text-align: right">
+                                    <img src="~/Content/Image/star.png" width="30" height="30" style="display: inline-block;" />
+                                    <span class="badge"> @Model[i].CollectCount</span>
+                                </a>
                             }
                             else
                             {
-                                <a href="@Url.Action("Collect", new { Guid = Model[i].Guid, Collect = true, Rurl = "Store/MyCollect"})"><img src="~/Content/Image/star_empty.png" align="right" /></a>
+                                <a href="@Url.Action("Collect", "Store", new { Guid = Model[i].Guid, Collect = true, Rurl = "Store/MyCollect"})" class="btn btn-default" style="text-align: right">
+                                    <img src="~/Content/Image/star_empty.png" width="30" height="30" style="display: inline-block;" />
+                                    <span class="badge"> @Model[i].CollectCount</span>
+                                </a>
                             }
-                        </h3>
+                        </div>
                         <table class="table table-striped" style="width: 100%;">
                             <tbody>
                                 <tr>
-                                    <td width="20%">電話</td>
+                                    <td width="20%">用餐類型</td>
+                                    <td width="80%">@Model[i].Type</td>
+                                </tr>
+                                <tr>
+                                    <td width="20%">聯絡電話</td>
                                     <td width="80%">@Model[i].Phone</td>
                                 </tr>
                                 <tr>
@@ -76,7 +88,7 @@
                                         @if (@Model[i].Introduction.Length > 20)
                                         {
                                             @(@Model[i].Introduction.Remove(20) + " ...")
-                                            <a href="/Store/Detail?Guid=@Model[i].Guid">More</a>
+                                            <a href="@Url.Action("Detail", "Store", new { Guid = @Model[i].Guid })">More</a>
                                         }
                                         else
                                         {
@@ -87,9 +99,9 @@
                             </tbody>
                         </table>
                         <p align="right">
-                            <a href="/Store/Detail?Guid=@Model[i].Guid" class="btn btn-primary" role="button">Learn More</a>
-                            <a href="/Store/Modify?Guid=@Model[i].Guid" class="btn btn-info" role="button">Modify Info</a>
-                            <a href="/Store/Delete?Guid=@Model[i].Guid" class="btn btn-danger" role="button">Delete Store</a>
+                            <a href="@Url.Action("Detail", "Store", new { Guid = @Model[i].Guid })" class="btn btn-primary" role="button">Learn More</a>
+                            <a href="@Url.Action("Modify", "Store", new { Guid = @Model[i].Guid })" class="btn btn-info" role="button">Modify Info</a>
+                            <a href="@Url.Action("Delete", "Store", new { Guid = @Model[i].Guid })" class="btn btn-danger" role="button">Delete Store</a>
                         </p>
                     </div>
                 </div>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web;
 
 namespace Iwant2EAT.Services
@@ -29,7 +30,7 @@ namespace Iwant2EAT.Services
         {
             var connection = new System.Data.SqlClient.SqlConnection(@"Data Source=.; Initial Catalog=Iwant2EAT; Integrated Security=True");
             connection.Open();
-            if (LoadAllCollect().FindAll(x => x.Username.Equals(collect.Username) && x.Guid.Equals(collect.Guid)).Count > 0)
+            if (LoadAllCollect().Any(x => x.Username.Equals(collect.Username) && x.Guid.Equals(collect.Guid)))
             {
                 return false;
             }

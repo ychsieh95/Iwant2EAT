@@ -6,22 +6,29 @@
 }
 
 <div id="msgLabel">
-    @(new HtmlString(ViewBag.ChangeEmailHTML))
-    @(new HtmlString(ViewBag.ChangePwdHTML))
-    @(new HtmlString(ViewBag.DelAccount))
+        @if (TempData["ChangeEmailHTML"] != null)
+        {
+            @Html.Raw(new HtmlString(TempData["ChangeEmailHTML"].ToString()));
+        }
+        @if (TempData["ChangePwdHTML"] != null)
+        {
+            @Html.Raw(new HtmlString(TempData["ChangePwdHTML"].ToString()));
+        }
+        @if(TempData["DelAccount"] != null)
+        {
+            @Html.Raw(new HtmlString(TempData["DelAccount"].ToString()));
+        }
 </div>
 
 <div class="panel panel-primary">
     <div class="panel-heading">帳號資訊</div>
     <div class="panel-body">
-        <p>　　帳號名稱：@(Session["Username"].ToString())</p>
-        <p>　　電子信箱：@(ViewBag.Email)</p>
-        <p>最後登入時間：@(ViewBag.LastLogin)</p>
-        <p>最後登入ＩＰ：@(ViewBag.LastIpAdr)</p>
+        <p>　　帳號名稱：@Session["Username"].ToString()</p>
+        <p>　　電子信箱：@ViewBag.Email</p>
+        <p>最後登入時間：@ViewBag.LastLogin</p>
+        <p>最後登入ＩＰ：@ViewBag.LastIpAdr</p>
     </div>
 </div>
-
-@Html.AntiForgeryToken()
 <div>
     <div class="col-md-4">
         <div class="panel panel-info">
@@ -29,6 +36,7 @@
             <div class="panel-body">
                 @{ using (Html.BeginForm("ChangeEmail", "Member", FormMethod.Post, new { id = "change-email-form", enctype = "multipart/form-data" }))
                     {
+                        @Html.AntiForgeryToken()
                         <div class="input-group">
                             <span class="input-group-addon">請輸入目前密碼：</span>
                             <input type="password" class="form-control" name="password" value="" placeholder="Enter your password here" aria-describedby="basic-addon1" />
@@ -52,6 +60,7 @@
             <div class="panel-body">
                 @{ using (Html.BeginForm("ChangePwd", "Member", FormMethod.Post, new { id = "change-pwd-form", enctype = "multipart/form-data" }))
                     {
+                        @Html.AntiForgeryToken()
                         <div class="input-group">
                             <span class="input-group-addon">請輸入目前密碼：</span>
                             <input type="password" class="form-control" name="password" value="" placeholder="Enter old password here" aria-describedby="basic-addon1" />
@@ -75,6 +84,7 @@
             <div class="panel-body">
                 @{ using (Html.BeginForm("DelAccount", "Member", FormMethod.Post, new { id = "del-account-form" }))
                     {
+                        @Html.AntiForgeryToken()
                         <div class="input-group">
                             <span class="input-group-addon">請輸入目前密碼：</span>
                             <input type="password" class="form-control" name="password" value="" placeholder="Enter your password here" aria-describedby="basic-addon1" />

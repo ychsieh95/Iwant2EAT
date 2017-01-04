@@ -6,7 +6,6 @@
     Layout = "/Views/Shared/_Layout.cshtml";
 }
 
-@Html.AntiForgeryToken()
 <div class="container">
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
@@ -25,30 +24,33 @@
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-lg-12">
-                            <form id="register-form" action="/Member/Register" method="POST" role="form" style="display: block;">
-                                <div class="form-group">
-                                    @Html.EditorFor(model => model.Username, new { htmlAttributes = new { @type = "text", @class = "form-control", @tabindex = "1", @placeholder = "Username" } })
-                                    @Html.ValidationMessageFor(model => model.Username, "", new { @class = "text-danger" })
-                                </div>
-                                <div class="form-group">
-                                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @type = "email", @class = "form-control", @tabindex = "2", @placeholder = "Email Address" } })
-                                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
-                                </div>
-                                <div class="form-group">
-                                    @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @type = "password", @class = "form-control", @tabindex = "3", @placeholder = "Password" } })
-                                    @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
-                                </div>
-                                <div class="form-group">
-                                    <input type="password" name="confrim-password" class="form-control" tabindex="4" placeholder="Confrim Password" />
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-sm-6 col-sm-offset-3">
-                                            <input type="button" name="register-submit" id="register-submit" tabindex="5" class="form-control btn btn-register" value="馬上註冊" onclick="checkRegister()" />
+                            @{ using (Html.BeginForm("Register", "Member", FormMethod.Post, new { id = "register-form", role = "form", style = "display: block;", enctype = "multipart/form-data" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <div class="form-group">
+                                        @Html.EditorFor(model => model.Username, new { htmlAttributes = new { @type = "text", @class = "form-control", @tabindex = "1", @placeholder = "Username" } })
+                                        @Html.ValidationMessageFor(model => model.Username, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @type = "email", @class = "form-control", @tabindex = "2", @placeholder = "Email Address" } })
+                                        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @type = "password", @class = "form-control", @tabindex = "3", @placeholder = "Password" } })
+                                        @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="password" name="confrim-password" class="form-control" tabindex="4" placeholder="Confrim Password" />
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-sm-6 col-sm-offset-3">
+                                                <input type="button" name="register-submit" id="register-submit" tabindex="5" class="form-control btn btn-register" value="馬上註冊" onclick="checkRegister()" />
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </form>
+                                    }
+                                }
                         </div>
                     </div>
                     <div id="msgDiv">                        

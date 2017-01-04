@@ -183,6 +183,7 @@
     <Content Include="Views\Store\Modify.cshtml" />
     <Content Include="Views\Store\MyStore.cshtml" />
     <Content Include="Views\Store\MyCollect.cshtml" />
+    <Content Include="Views\Home\Search.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
