@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Web;
 using System.Web.Mvc;
 
 namespace Iwant2EAT.Controllers
@@ -18,10 +16,17 @@ namespace Iwant2EAT.Controllers
         [HttpPost]
         public ActionResult Register(Models.Member member)
         {
+            string checkMsg = member.CheckMember();
+            if (!string.IsNullOrEmpty(checkMsg))
+            {
+                ViewBag.AddMemberHTML = checkMsg;
+                return View();
+            }
+
             member.LastLogin = DateTime.Now;
             member.LastIpAdr = Request.UserHostAddress;
 
-            Service.MemberService ms = new Service.MemberService();
+            Services.MemberService ms = new Services.MemberService();
             List<Models.Member> memberList = ms.LoadAllMember().FindAll(x => x.Username.Equals(member.Username));
 
             Session.Clear();
@@ -68,10 +73,17 @@ namespace Iwant2EAT.Controllers
         [HttpPost]
         public ActionResult Login(Models.Member member)
         {
+            string checkMsg = member.CheckMember();
+            if (!string.IsNullOrEmpty(checkMsg))
+            {
+                ViewBag.AddMemberHTML = checkMsg;
+                return View();
+            }
+
             member.LastLogin = DateTime.Now;
             member.LastIpAdr = Request.UserHostAddress;
 
-            Service.MemberService ms = new Service.MemberService();
+            Services.MemberService ms = new Services.MemberService();
             List<Models.Member> memberList = ms.LoadAllMember();
 
             Session.Clear();
@@ -113,7 +125,7 @@ namespace Iwant2EAT.Controllers
             }
             else
             {
-                Service.MemberService ms = new Service.MemberService();
+                Services.MemberService ms = new Services.MemberService();
                 Models.Member member = ms.LoadAllMember().Find(x => x.Username.Equals(Session["Username"]));
                 ViewBag.Email = member.Email;
                 ViewBag.LastLogin = member.LastLogin;
@@ -125,10 +137,10 @@ namespace Iwant2EAT.Controllers
         [HttpPost]
         public ActionResult ChangeEmail(string password, string newEmail)
         {
-            Service.MemberService ms = new Service.MemberService();
+            Services.MemberService ms = new Services.MemberService();
             List<Models.Member> memberList = ms.LoadAllMember();
             
-            if (memberList.Find(x => x.Username.Equals(Session["Username"].ToString())).Password.Equals(password, StringComparison.InvariantCultureIgnoreCase))
+            if (memberList.Find(x => x.Username.Equals(Session["Username"].ToString())).Password.Equals(password))
             {
                 if (ms.UpdateMember(setCommand: string.Format("Email='{0}'", newEmail), whereCommand: string.Format("Username='{0}'", Session["Username"].ToString())))
                 {
@@ -149,10 +161,10 @@ namespace Iwant2EAT.Controllers
         [HttpPost]
         public ActionResult ChangePwd(string password, string newPassword)
         {
-            Service.MemberService ms = new Service.MemberService();
+            Services.MemberService ms = new Services.MemberService();
             List<Models.Member> memberList = ms.LoadAllMember();
 
-            if (memberList.Find(x => x.Username.Equals(Session["Username"].ToString())).Password.Equals(password, StringComparison.InvariantCultureIgnoreCase))
+            if (memberList.Find(x => x.Username.Equals(Session["Username"].ToString())).Password.Equals(password))
             {
                 if (ms.UpdateMember(setCommand: string.Format("Password='{0}'", newPassword), whereCommand: string.Format("Username='{0}'", Session["Username"].ToString())))
                 {
@@ -173,20 +185,37 @@ namespace Iwant2EAT.Controllers
         [HttpPost]
         public ActionResult DelAccount(string password)
         {
-            Service.MemberService ms = new Service.MemberService();
+            Services.MemberService ms = new Services.MemberService();
             List<Models.Member> memberList = ms.LoadAllMember();
 
-            if (memberList.Find(x => x.Username.Equals(Session["Username"].ToString())).Password.Equals(password, StringComparison.InvariantCultureIgnoreCase))
+            if (memberList.Find(x => x.Username.Equals(Session["Username"].ToString())).Password.Equals(password))
             {
+                // Delete account
                 if (ms.DeleteMember(username: Session["Username"].ToString()))
                 {
-                    ViewBag.DelAccount = "<div class=\"alert alert-success\" role=\"alert\">[Failure] 密碼修改成功！</div>";
+                    // Delete store
+                    Services.StoreService ss = new Services.StoreService();
+                    foreach (Models.Store store in ss.LoadAllStore().FindAll(x => x.Creater.Equals(Session["Username"].ToString())))
+                    {
+                        if (System.IO.File.Exists(Request.MapPath(store.ImageUrl)))
+                        {
+                            System.IO.File.Delete(Request.MapPath(store.ImageUrl));
+                        }
+                        ss.DeleteStore(store.Guid);
+                    }
+                    // Delete collect
+                    Services.CollectService cs = new Services.CollectService();
+                    foreach (Models.Collect collect in cs.LoadAllCollect().FindAll(x => x.Username.Equals(Session["Username"].ToString())))
+                    {
+                        cs.DeleteCollect(collect);
+                    }
+                    ViewBag.DelAccount = "<div class=\"alert alert-success\" role=\"alert\">[Failure] 帳戶刪除成功！</div>";
                     Session.Clear();
                     return Redirect("/Home/Index");
                 }
                 else
                 {
-                    ViewBag.DelAccount = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 密碼修改失敗！</div>";
+                    ViewBag.DelAccount = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 帳戶刪除失敗！</div>";
                 }
             }
             else

@@ -24,7 +24,7 @@
             <div class="collapse navbar-collapse" id="navigationbar">
                 <ul class="nav navbar-nav">
                     <li class="@ViewBag.HomeActive"><a href="/Home/Index">首頁</a></li>
-                    @{if (Session.Count > 0 && Session["Username"] != null)
+                    @{if (Session["Username"] != null)
                         {
                             @(new HtmlString(string.Format("<li class=\"{0}\"><a href=\"/Store/Create\">新增店家</a></li>", ViewBag.AddStoreActive != null ? ViewBag.AddStoreActive : "")))
                         }
@@ -37,11 +37,6 @@
                         <input name="storeKeyword" type="text" class="form-control" placeholder="搜尋店家" />
                     </div>
                 }
-                @*<form class="navbar-form navbar-left" role="search">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="搜尋店家">
-                    </div>
-                </form>*@
                 @if (HttpContext.Current.Session.Count > 0)
                 {
                     if (string.IsNullOrEmpty(@HttpContext.Current.Session["Username"].ToString()))
@@ -57,10 +52,11 @@
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">你好，@HttpContext.Current.Session["Username"].ToString()<span class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu">
-                                    <li><a href="/Store/MyStore">My Store</a></li>
-                                    <li><a href="/Member/Profile">Profile</a></li>
+                                    <li><a href="/Store/MyStore">我的店家</a></li>
+                                    <li><a href="/Store/MyCollect">我的收藏</a></li>
+                                    <li><a href="/Member/Profile">帳戶</a></li>
                                     <li class="divider"></li>
-                                    <li><a href="/Member/Logout">Logout</a></li>
+                                    <li><a href="/Member/Logout">登出</a></li>
                                 </ul>
                             </li>
                         </ul>

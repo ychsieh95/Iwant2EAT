@@ -121,6 +121,9 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Image\star.png" />
+    <Content Include="Content\Image\star_empty.png" />
+    <Content Include="Content\Image\star_half.png" />
     <Content Include="Content\login-register.css" />
     <Content Include="Content\Site.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -158,9 +161,11 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Collect.cs" />
     <Compile Include="Models\Member.cs" />
     <Compile Include="Models\Store.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\CollectService.cs" />
     <Compile Include="Services\MemberService.cs" />
     <Compile Include="Services\StoreService.cs" />
   </ItemGroup>
@@ -177,6 +182,7 @@
     <Content Include="Views\Store\Detail.cshtml" />
     <Content Include="Views\Store\Modify.cshtml" />
     <Content Include="Views\Store\MyStore.cshtml" />
+    <Content Include="Views\Store\MyCollect.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -186,7 +192,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Content\Image\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

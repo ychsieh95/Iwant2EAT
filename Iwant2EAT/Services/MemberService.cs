@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Web;
 
-namespace Iwant2EAT.Service
+namespace Iwant2EAT.Services
 {
     public class MemberService
     {
@@ -32,8 +32,16 @@ namespace Iwant2EAT.Service
         {
             var connection = new System.Data.SqlClient.SqlConnection(@"Data Source=.; Initial Catalog=Iwant2EAT; Integrated Security=True");
             connection.Open();
-            return (new System.Data.SqlClient.SqlCommand(string.Format("INSERT INTO Member (Username, Password, Email, LastLogin, LastIpAdr) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}');",
-                                                                       member.Username, member.Password, member.Email, member.LastLogin.ToString("yyyy/MM/dd HH:mm:ss"), member.LastIpAdr), connection).ExecuteNonQuery() > 0);
+
+            if (LoadAllMember().FindAll(x => x.Username.Equals(member.Username)).Count > 0)
+            {
+                return false;
+            }
+            else
+            {
+                return (new System.Data.SqlClient.SqlCommand(string.Format("INSERT INTO Member (Username, Password, Email, LastLogin, LastIpAdr) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}');",
+                                                                           member.Username, member.Password, member.Email, member.LastLogin.ToString("yyyy/MM/dd HH:mm:ss"), member.LastIpAdr), connection).ExecuteNonQuery() > 0);
+            }
         }
 
         public bool UpdateMember(string setCommand, string whereCommand)

@@ -6,12 +6,12 @@
 }
 <div class="container">
     <div id="msgDiv">
-        @(new HtmlString(ViewBag.AddStoreHTML))
+        @(new HtmlString(ViewBag.ModifyStoreHTML))
     </div>
 
     <div class="form-horizontal">
         @Html.AntiForgeryToken()
-        @{ using (Html.BeginForm("Modify", "Store", FormMethod.Post, new { id = "add-store-info", enctype = "multipart/form-data" }))
+        @{ using (Html.BeginForm("Modify", "Store", FormMethod.Post, new { id = "modify-store-info", enctype = "multipart/form-data" }))
             {
                 <div>
                     <h3><strong>更新店家</strong></h3>

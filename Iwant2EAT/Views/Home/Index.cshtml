@@ -5,14 +5,46 @@
     Layout = "/Views/Shared/_Layout.cshtml";
 }
 
+<div id="msgDiv">
+    @(new HtmlString(ViewBag.SearchHtml))
+    @if (TempData.ContainsKey("CollectHtml"))
+    {
+        @Html.Raw(new HtmlString(TempData["CollectHtml"].ToString()))
+    }
+    @if (TempData.ContainsKey("CreateStoreHtml"))
+    {
+        @Html.Raw(new HtmlString(TempData["CreateStoreHtml"].ToString()))
+    }
+    @if (TempData.ContainsKey("ModifyStoreHtml"))
+     {
+        @Html.Raw(new HtmlString(TempData["ModifyStoreHtml"].ToString()))
+    }
+    @if (TempData.ContainsKey("DeleteStoreHtml"))
+    {
+        @Html.Raw(new HtmlString(TempData["DeleteStoreHtml"].ToString()))
+    }
+</div>
 <div class="row">
-    @for (int i = 0; i < Model.Count; i++)
+    @for (int i = 0; Model != null && i < Model.Count; i++)
     {
         <div class="col-xs-12 col-sm-6 col-md-3">
             <div class="thumbnail">
                 <img data-src="holder.js/100%x200" alt="100%x200" style="height: 300px; width: 100%; display: block;" src="@Model[i].ImageUrl" data-holder-rendered="true">
                 <div class="caption">
-                    <h3><strong>@Model[i].Name</strong><small>@(string.IsNullOrEmpty(@Model[i].Branch) ? "" : string.Format(" ({0})", @Model[i].Branch))</small></h3>
+                    <h3>
+                        <strong>@Model[i].Name</strong><small>@(string.IsNullOrEmpty(@Model[i].Branch) ? "" : string.Format(" ({0})", @Model[i].Branch))</small>
+                        @if (Session["Username"] != null)
+                        {
+                            if (Model[i].Collect)
+                            {
+                                <a href="@Url.Action("Collect", "Store", new { Guid = Model[i].Guid, Collect = false, Rurl = "Home/Index"})"><img src="~/Content/Image/star.png" align="right" /></a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("Collect", "Store", new { Guid = Model[i].Guid, Collect = true, Rurl = "Home/Index" })"><img src="~/Content/Image/star_empty.png" align="right" /></a>
+                            }
+                        }
+                    </h3>
                     <table class="table table-striped" style="width: 100%;">
                         <tbody>
                             <tr>
@@ -21,11 +53,11 @@
                             </tr>
                             <tr>
                                 <td width="20%">地址</td>
-                                <td width="80%">@Model[i].Address</td>
+                                <td width="80%"><a href="https://www.google.com.tw/maps/place/@Model[i].Address" target="_blank">@Model[i].Address</a></td>
                             </tr>
                             <tr>
                                 <td width="20%">營業時間</td>
-                                <td width="80%">@(string.Format("{0} - {1}", @Model[i].OpeningTime, @Model[i].ClosingTime))</td>
+                                <td width="80%">@(string.Format("{0} - {1}", @Model[i].OpeningTime.ToString(@"hh\:mm"), @Model[i].ClosingTime.ToString(@"hh\:mm")))</td>
                             </tr>
                             <tr>
                                 <td width="20%">本日公休</td>

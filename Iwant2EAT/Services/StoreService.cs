@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Iwant2EAT.Service
+namespace Iwant2EAT.Services
 {
     public class StoreService 
     {
-        public List<Models.Store> LoadAllStore()
+        public List<Models.Store> LoadAllStore(string Username = "")
         {
             var connection = new System.Data.SqlClient.SqlConnection(@"Data Source=.; Initial Catalog=Iwant2EAT; Integrated Security=True");
             connection.Open();
             var reader = new System.Data.SqlClient.SqlCommand(@"SELECT * FROM Store;", connection).ExecuteReader();
 
             List<Models.Store> stores = new List<Models.Store>();
+            Services.CollectService ls = new CollectService();
             while (reader.Read())
             {
                 stores.Add(new Models.Store()
@@ -33,7 +34,8 @@ namespace Iwant2EAT.Service
                     Wednesday = !reader["DayOff"].ToString().Contains("3;"),
                     Thursday = !reader["DayOff"].ToString().Contains("4;"),
                     Friday = !reader["DayOff"].ToString().Contains("5;"),
-                    Saturday = !reader["DayOff"].ToString().Contains("6;")
+                    Saturday = !reader["DayOff"].ToString().Contains("6;"),
+                    Collect = !string.IsNullOrEmpty(Username) && (ls.LoadAllCollect().Find(x => x.Username.Equals(Username) && x.Guid.Equals(reader["Guid"].ToString())) != null)
                 });
             }
             connection.Close();
@@ -44,11 +46,17 @@ namespace Iwant2EAT.Service
         {
             var connection = new System.Data.SqlClient.SqlConnection(@"Data Source=.; Initial Catalog=Iwant2EAT; Integrated Security=True");
             connection.Open();
-            return (new System.Data.SqlClient.SqlCommand(string.Format("INSERT INTO Store ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}) VALUES ('{11}', '{12}', '{13}', '{14}', '{15}', '{16}', '{17}', '{18}', '{19}', '{20}', '{21}');",
-                                                                       "Name", "Branch", "Phone", "DayOff", "OpeningTime", "ClosingTime", "Address", "Introduction", "ImageUrl", "Creater", "Guid",
-                                                                       store.Name, store.Branch, store.Phone, store.DayOff, store.OpeningTime, store.ClosingTime, store.Address, store.Introduction, store.ImageUrl, store.Creater, store.Guid),
-                                                         connection).ExecuteNonQuery() > 0);
-
+            if (LoadAllStore().FindAll(x => x.Name.Equals(store.Name) && x.Branch.Equals(store.Branch)).Count > 0)
+            {
+                return false;
+            }
+            else
+            {
+                return (new System.Data.SqlClient.SqlCommand(string.Format("INSERT INTO Store ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}) VALUES ('{11}', '{12}', '{13}', '{14}', '{15}', '{16}', '{17}', '{18}', '{19}', '{20}', '{21}');",
+                                                                           "Name", "Branch", "Phone", "DayOff", "OpeningTime", "ClosingTime", "Address", "Introduction", "ImageUrl", "Creater", "Guid",
+                                                                           store.Name, store.Branch, store.Phone, store.DayOff, store.OpeningTime, store.ClosingTime, store.Address, store.Introduction, store.ImageUrl, store.Creater, store.Guid),
+                                                             connection).ExecuteNonQuery() > 0);
+            }
         }
 
         public bool UpdateStore(Models.Store store)
@@ -68,7 +76,6 @@ namespace Iwant2EAT.Service
             connection.Open();
             return (new System.Data.SqlClient.SqlCommand(string.Format("DELETE FROM Store WHERE Guid='{0}';", storeGuid),
                                                          connection).ExecuteNonQuery() > 0);
-
         }
     }
 }

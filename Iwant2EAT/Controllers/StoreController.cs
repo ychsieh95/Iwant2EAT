@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 
@@ -27,9 +28,10 @@ namespace Iwant2EAT.Controllers
         public ActionResult Create(Models.Store store)
         {
             ViewBag.AddStoreActive = "active";
-            if (string.IsNullOrEmpty(store.Name))
+            string checkStore = store.CheckStore();
+            if (!string.IsNullOrEmpty(checkStore))
             {
-                ViewBag.AddStoreHTML = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 店家名稱禁止空白！</div>";
+                ViewBag.CreateStoreHtml = checkStore;
                 return View();
             }
 
@@ -59,10 +61,10 @@ namespace Iwant2EAT.Controllers
                 store.ImageUrl = this.Url.Content(System.IO.Path.Combine(dir, fileName));
             }
 
-            Service.StoreService ss = new Service.StoreService();
+            Services.StoreService ss = new Services.StoreService();
             if (ss.LoadAllStore().Any(x => x.Name.Equals(store.Name) && x.Branch.Equals(store.Branch)))
             {
-                ViewBag.CreateStoreHtml = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 已有重複店家名稱！</div>";
+                ViewBag.CreateStoreHtml = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 已有重複店家資訊！</div>";
                 return View();
             }
             else
@@ -70,7 +72,7 @@ namespace Iwant2EAT.Controllers
                 if (ss.AddStore(store))
                 {
                     // 導向到詳細頁面
-                    TempData.Add("CreateStoreHtml", "<div class=\"alert alert-success\" role=\"alert\">[Success] 店家資訊建立成功！</div>");
+                    TempData["CreateStoreHtml"] = "<div class=\"alert alert-success\" role=\"alert\">[Success] 店家資訊建立成功！</div>";
                     return RedirectToAction("Detail", new { Guid = store.Guid });
                 }
                 else
@@ -84,15 +86,16 @@ namespace Iwant2EAT.Controllers
         [HttpGet]
         public ActionResult Modify(string Guid)
         {
-            return View(new Service.StoreService().LoadAllStore().Find(x => x.Guid.Equals(Guid)));
+            return View(new Services.StoreService().LoadAllStore(Session["Username"].ToString()).Find(x => x.Guid.Equals(Guid)));
         }
 
         [HttpPost]
         public ActionResult Modify(Models.Store store)
         {
-            if (string.IsNullOrEmpty(store.Name))
+            string checkStore = store.CheckStore();
+            if (!string.IsNullOrEmpty(checkStore))
             {
-                ViewBag.AddStoreHTML = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 店家名稱禁止空白！</div>";
+                ViewBag.ModifyStoreHTML = checkStore;
                 return View(store);
             }
 
@@ -118,22 +121,22 @@ namespace Iwant2EAT.Controllers
                 store.ImageUrl = this.Url.Content(System.IO.Path.Combine(dir, fileName));
             }
 
-            Service.StoreService ss = new Service.StoreService();
+            Services.StoreService ss = new Services.StoreService();
             if (!ss.LoadAllStore().Find(x => x.Guid.Equals(store.Guid)).Creater.Equals(Session["Username"].ToString()))
             {
-                TempData.Add("UpdateStoreHtml", "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 權限錯誤！</div>");
+                TempData["ModifyStoreHtml"] = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 權限錯誤！</div>";
                 return RedirectToAction("Detail", new { Guid = store.Guid });
             }
             else
             {
                 if (ss.UpdateStore(store))
                 {
-                    TempData.Add("UpdateStoreHtml", "<div class=\"alert alert-success\" role=\"alert\">[Success] 更新店家資訊成功！</div>");
+                    TempData["ModifyStoreHtml"] = "<div class=\"alert alert-success\" role=\"alert\">[Success] 更新店家資訊成功！</div>";
                     return RedirectToAction("Detail", new { Guid = store.Guid });
                 }
                 else
                 {
-                    TempData.Add("UpdateStoreHtml", "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 更新店家資訊時發生錯誤！</div>");
+                    TempData["ModifyStoreHtml"] = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 更新店家資訊時發生錯誤！</div>";
                     return RedirectToAction("Detail", new { Guid = store.Guid });
                 }
             }
@@ -142,27 +145,39 @@ namespace Iwant2EAT.Controllers
         [HttpGet]
         public ActionResult Delete(string Guid)
         {
-            Service.StoreService ss = new Service.StoreService();
-            if (!ss.LoadAllStore().Find(x => x.Guid.Equals(Guid)).Creater.Equals(Session["Username"].ToString()))
+            Services.StoreService ss = new Services.StoreService();
+            Models.Store store = ss.LoadAllStore().Find(x => x.Guid.Equals(Guid));
+
+            if (!store.Creater.Equals(Session["Username"].ToString()))
             {
-                TempData.Add("DeleteStoreHtml", "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 權限錯誤！</div>");
+                TempData["DeleteStoreHtml"] = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 權限錯誤！</div>";
                 return RedirectToAction("Detail", new { Guid = Guid });
             }
             else
             {
-                string filePath = Request.MapPath(ss.LoadAllStore().Find(x => x.Guid.Equals(Guid)).ImageUrl);
+                
+                string filePath = Request.MapPath(store.ImageUrl);
                 if (ss.DeleteStore(Guid))
                 {
+                    // Delete image
                     if (System.IO.File.Exists(filePath))
                     {
                         System.IO.File.Delete(filePath);
                     }
-                    TempData.Add("DeleteStoreHtml", "<div class=\"alert alert-success\" role=\"alert\">[success] 刪除店家資訊成功！</div>");
+                    // Delete collect
+                    Services.CollectService cs = new Services.CollectService();
+                    foreach (Models.Collect collect in cs.LoadAllCollect().FindAll(x => x.Guid.Equals(Guid)))
+                    {
+                        cs.DeleteCollect(collect);
+                    }
+                    TempData["DeleteStoreHtml"] = string.Format("<div class=\"alert alert-success\" role=\"alert\">[success] 刪除 {0}{1} 資訊成功！</div>",
+                                                                store.Name, string.IsNullOrEmpty(store.Branch) ? "" : string.Format("({0})", store.Branch));
                     return RedirectToAction("Index", "Home");
                 }
                 else
                 {
-                    TempData.Add("DeleteStoreHtml", "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 刪除店家資訊時發生錯誤！</div>");
+                    TempData["DeleteStoreHtml"] = string.Format("<div class=\"alert alert-danger\" role=\"alert\">[Failure] 刪除 {0}{1} 資訊時發生錯誤！</div>",
+                                                                store.Name, string.IsNullOrEmpty(store.Branch) ? "" : string.Format("({0})", store.Branch));
                     return RedirectToAction("Detail", new { Guid = Guid });
                 }
             }
@@ -177,19 +192,76 @@ namespace Iwant2EAT.Controllers
             }
             else
             {
-                Service.StoreService ss = new Service.StoreService();
-                Models.Store store = ss.LoadAllStore().Find(x => x.Guid.Equals(Guid));
+                Services.StoreService ss = new Services.StoreService();
+                Models.Store store = ss.LoadAllStore(Session["Username"].ToString()).Find(x => x.Guid.Equals(Guid));
 
                 ViewBag.IsCreater = false;
-                if (Session.Count > 0 && Session["Username"] != null)
+                if (Session["Username"] != null)
                 {
                     if (Session["Username"].ToString().Equals(store.Creater))
                     {
                         ViewBag.IsCreater = true;
                     }
+                    if (new Services.CollectService().LoadAllCollect().Any(x => x.Username.Equals(Session["Username"].ToString()) && x.Guid.Equals(Guid)))
+                    {
+                        ViewBag.Collect = true;
+                    }
                 }
                 ViewBag.StoreName = store.Name + (string.IsNullOrEmpty(store.Branch) ? "" : string.Format(" ({0})", store.Branch));
                 return View(store);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult Collect(string Guid, bool Collect, string Rurl = "")
+        {
+            if (string.IsNullOrEmpty(Guid))
+            {
+                return RedirectToAction("Detail", "Store");
+            }
+            else
+            {
+                if (Session["Username"] != null)
+                {
+                    Models.Store store = new Services.StoreService().LoadAllStore().Find(x => x.Guid.Equals(Guid));
+                    Services.CollectService ls = new Services.CollectService();
+                    if (Collect)
+                    {
+                        if (ls.AddCollect(new Models.Collect() { Username = Session["Username"].ToString(), Guid = Guid }))
+                        {
+                            TempData["CollectHtml"] = string.Format("<div class=\"alert alert-success\" role=\"alert\">[Success] {0}{1} 添入收藏成功！</div>",
+                                                                    store.Name, string.IsNullOrEmpty(store.Branch) ? "" : string.Format("({0})", store.Branch));
+                        }
+                        else
+                        {
+                            TempData["CollectHtml"] = string.Format("<div class=\"alert alert-danger\" role=\"alert\">[Failure] {0}{1} 添入收藏失敗！</div>",
+                                                                    store.Name, string.IsNullOrEmpty(store.Branch) ? "" : string.Format("({0})", store.Branch));
+                        }
+                    }
+                    else
+                    {
+                        if (ls.DeleteCollect(new Models.Collect() { Username = Session["Username"].ToString(), Guid = Guid }))
+                        {
+                            TempData["CollectHtml"] = string.Format("<div class=\"alert alert-success\" role=\"alert\">[Success] {0}{1} 取消收藏成功！</div>",
+                                                                    store.Name, string.IsNullOrEmpty(store.Branch) ? "" : string.Format("({0})", store.Branch));
+                        }
+                        else
+                        {
+                            TempData["CollectHtml"] = string.Format("<div class=\"alert alert-danger\" role=\"alert\">[Failure] {0}{1} 取消收藏失敗！</div>",
+                                                                    store.Name, string.IsNullOrEmpty(store.Branch) ? "" : string.Format("({0})", store.Branch));
+                        }
+                    }
+                }
+
+                // Redirect
+                if (string.IsNullOrEmpty(Rurl))
+                {
+                    return RedirectToAction("Detail", "Store", new { Guid = Guid });
+                }
+                else
+                {
+                    return RedirectToAction(Rurl.Split('/').Last(), Rurl.Split('/').First());
+                }
             }
         }
 
@@ -202,8 +274,8 @@ namespace Iwant2EAT.Controllers
             }
             else
             {
-                Service.StoreService ss = new Service.StoreService();
-                List<Models.Store> stores = ss.LoadAllStore().FindAll(x => x.Creater.Equals(Session["Username"].ToString()));
+                Services.StoreService ss = new Services.StoreService();
+                List<Models.Store> stores = ss.LoadAllStore(Session["Username"].ToString()).FindAll(x => x.Creater.Equals(Session["Username"].ToString()));
                 if (stores.Count > 0)
                 {
                     ViewBag.DayOfWeek = ((int)DateTime.Now.DayOfWeek).ToString();
@@ -212,6 +284,29 @@ namespace Iwant2EAT.Controllers
                 else
                 {
                     ViewBag.SearchHtml = "<div class=\"alert alert-info\" role=\"alert\">[Info] 無任何已建立之店家資訊！</div>";
+                    return View();
+                }
+            }
+        }
+
+        [HttpGet]
+        public ActionResult MyCollect()
+        {
+            if (Session.Count <= 0 || Session["Username"] == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                List<Models.Store> stores = new Services.StoreService().LoadAllStore(Session["Username"].ToString()).FindAll(x => x.Collect);
+                if (stores.Count > 0)
+                {
+                    ViewBag.DayOfWeek = ((int)DateTime.Now.DayOfWeek).ToString();
+                    return View(stores);
+                }
+                else
+                {
+                    ViewBag.SearchHtml = "<div class=\"alert alert-info\" role=\"alert\">[Info] 無任何已收藏之店家資訊！</div>";
                     return View();
                 }
             }
