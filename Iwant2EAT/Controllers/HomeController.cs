@@ -47,6 +47,7 @@ namespace Iwant2EAT.Controllers
                     ViewBag.Name = "active"; break;
             }
             ViewBag.Keyword = Keyword;
+            ViewBag.Findway = Findway;
             ViewBag.NameCount = storesDic["Name"].Count;
             ViewBag.BranchCount = storesDic["Branch"].Count;
             ViewBag.TypeCount = storesDic["Type"].Count;

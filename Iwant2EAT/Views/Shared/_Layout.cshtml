@@ -34,7 +34,7 @@
                 {
                     <div class="form-group">
                         <input name="Keyword" type="text" class="form-control" placeholder="搜尋店家" />
-                        <input name="Findway" type="hidden" value="Name" />
+                        <input name="Findway" type="hidden" value="@ViewBag.Findway" />
                     </div>
                 }
                 @if (HttpContext.Current.Session.Count > 0)
@@ -53,8 +53,8 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">你好，@HttpContext.Current.Session["Username"].ToString()<span class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu">
                                     <li><a href="@Url.Action("MyStore", "Store")">我的店家</a></li>
-                                    <li><a href="@Url.Action("MyStore", "MyCollect")">我的收藏</a></li>
-                                    <li><a href="@Url.Action("MyStore", "Profile")">帳戶</a></li>
+                                    <li><a href="@Url.Action("MyCollect", "Store")">我的收藏</a></li>
+                                    <li><a href="@Url.Action("Profile", "Member")">帳戶</a></li>
                                     <li class="divider"></li>
                                     <li><a href="@Url.Action("Logout", "Member")">登出</a></li>
                                 </ul>
