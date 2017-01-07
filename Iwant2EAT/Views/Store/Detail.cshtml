@@ -7,6 +7,7 @@
 
 <div class="container">
     <div id="msgDiv">
+        @Html.Raw(new HtmlString(ViewBag.ErrorHtml))
         @if (TempData.ContainsKey("CollectHtml"))
         {
             @Html.Raw(new HtmlString(TempData["CollectHtml"].ToString()))
@@ -25,10 +26,9 @@
         }
     </div>
 
-
     <div class="form-horizontal">
         <h3>
-            <strong>@(Model.Name)</strong> <small>@(Model.Branch)</small>
+            <strong>@Model.Name</strong> <small>@Model.Branch</small>
         </h3>
         <hr />
 
@@ -38,13 +38,13 @@
         <div class="form-group">
             <label class="control-label col-md-2">用餐類型</label>
             <div class="col-md-10">
-                <p>@(Model.Type)</p>
+                <p>@Model.Type)</p>
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-md-2">聯絡電話</label>
             <div class="col-md-10">
-                <p>@(Model.Phone)</p>
+                <p>@Model.Phone</p>
             </div>
         </div>
         <div class="form-group">
@@ -64,54 +64,53 @@
         <div class="form-group">
             <label class="control-label col-md-2">開店時間</label>
             <div class="col-md-10">
-                <p>@(Model.OpeningTime.ToString(@"hh\:mm"))</p>
+                <p>@Model.OpeningTime.ToString(@"hh\:mm")</p>
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-md-2">閉店時間</label>
             <div class="col-md-10">
-                <p>@(Model.ClosingTime.ToString(@"hh\:mm"))</p>
+                <p>@Model.ClosingTime.ToString(@"hh\:mm")</p>
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-md-2">地址</label>
             <div class="col-md-10">
-                <p><a href="https://www.google.com.tw/maps/place/@Model.Address" target="_blank">@(Model.Address)</a></p>
+                <p><a href="https://www.google.com.tw/maps/place/@Model.Address" target="_blank">@Model.Address</a></p>
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-md-2">店家介紹</label>
             <div class="col-md-10">
-                <p>@(Model.Introduction)</p>
+                <p>@Model.Introduction</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2">留言數</label>
+            <div class="col-md-10">
+                <p><a href="@Url.Action("Reply", new { StoreGuid = Model.Guid })">@(Model.ReplyCount)</a></p>
             </div>
         </div>
     </div>
 
-
-    @if (ViewBag.IsCreater)
-    {
-        <div style="text-align:right;">
-            <p>
-                @if (Session["Username"] != null)
-                {
-                    if (Model.Collect)
-                    {
-                        <a href="@Url.Action("Collect", "Store", new { Guid = Model.Guid, Collect = false})" class="btn btn-primary" style="text-align: right">
-                            <img src="~/Content/Image/star.png" width="20" height="20" style="display: inline-block;" />
-                            <span class="badge"> @Model.CollectCount</span>
-                        </a>
-                    }
-                    else
-                    {
-                        <a href="@Url.Action("Collect", "Store", new { Guid = Model.Guid, Collect = true})" class="btn btn-default" style="text-align: right">
-                            <img src="~/Content/Image/star_empty.png" width="20" height="20" style="display: inline-block;" />
-                            <span class="badge"> @Model.CollectCount</span>
-                        </a>
-                    }
-                }
+    <div style="text-align: right;">
+        <p>
+            @if (Session["Username"] != null)
+            {
+                <a href="@Url.Action("Collect", "Store", new { Guid = Model.Guid, Collect = !Model.IsCollect })" class="btn btn-default" style="text-align: right">
+                    <img src="~/@(Model.IsCollect ? "Content/Resources/star.png" : "Content/Resources/star_empty.png")" width="30" height="30" style="display: inline-block;" />
+                    <span class="badge"> @Model.CollectCount</span>
+                </a>
+                <a href="@Url.Action("Reply", "Store", new { StoreGuid = Model.Guid })" class="btn btn-default" style="text-align: right">
+                    <img src="~/@(Model.IsReply ? "Content/Resources/reply_full.png" : "Content/Resources/reply_line.png")" width="30" height="30" style="display: inline-block;" />
+                    <span class="badge"> @Model.ReplyCount</span>
+                </a>
+            }
+            @if (ViewBag.IsCreater)
+            {
                 <a href="@Url.Action("Modify", "Store", new { Guid = @Model.Guid })" class="btn btn-info" role="button">Modify Info</a>
                 <a href="@Url.Action("Delete", "Store", new { Guid = @Model.Guid })" class="btn btn-danger" role="button">Delete Store</a>
-            </p>
-        </div>
-    }
+            }
+        </p>
+    </div>
 </div>

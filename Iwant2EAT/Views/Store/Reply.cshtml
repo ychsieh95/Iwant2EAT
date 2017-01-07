@@ -1,0 +1,95 @@
+﻿@model Iwant2EAT.Models.Reply
+@Layout@{
+    ViewBag.Title = string.Format("{0} | EEEaTTT", ViewBag.StoreName);
+    ViewBag.HomeActive = "";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div id="msgDiv">
+        @if (TempData["CreateReplyHtml"] != null)
+        {
+            @Html.Raw(new HtmlString(TempData["CreateReplyHtml"].ToString()));
+        }
+        @if (TempData["DeleteReplyHtml"] != null)
+        {
+            @Html.Raw(new HtmlString(TempData["DeleteReplyHtml"].ToString()));
+        }
+    </div>
+
+    <div class="form-horizontal">
+        <table style="width: 100%;">
+            <tr>
+                <td align="left" valign="bottom">
+                    <h3>
+                        <strong>@ViewBag.StoreName</strong> <small>@ViewBag.BranchName</small>
+                    </h3>
+                </td>
+                <td align="right" valign="bottom">
+                    <a href="@Url.Action("Detail", "Store", new { Guid = Model.newReply.StoreGuid })">[返回]</a>
+                </td>
+            </tr>
+        </table>
+        <hr />
+
+        @if (Session["Username"] != null)
+        {
+            using (Html.BeginForm("CreateReply", "Store", FormMethod.Post, new { id = "modify-store-info", enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.LabelFor(model => model.newReply.Context, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-8">
+                    @Html.EditorFor(model => model.newReply.Context, new { htmlAttributes = new { @type = "text", @class = "form-control", @placeholder = "此處可輸入新留言", @maxlength = "50" } })
+                    @Html.ValidationMessageFor(model => model.newReply.Context, "", new { @type = "text", @class = "text-danger" })
+                    @Html.HiddenFor(model => model.newReply.StoreGuid)
+                </div>
+                <div class="col-md-2">
+                    <input type="submit" value="留言" class="btn btn-primary" />
+                </div>
+            }
+            <hr />
+        }
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th width="10%">使用者</th>
+                    <th width="70%">留言</th>
+                    <th width="15%">留言時間</th=">
+                    <th width="10%"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (Iwant2EAT.Models.lReply reply in Model.Replys)
+                {
+                    <tr>
+                        <td>@reply.Creater</td>
+                        <td>@reply.Context</td>
+                        <td>@reply.RecordTime.ToString("yyyy/MM/dd hh:mm:ss")</td>
+                        <td>
+                            @if (Session["Username"] != null && Session["Username"].ToString().Equals(reply.Creater))
+                            {
+                                <div style="text-align: right;">
+                                    @using (Html.BeginForm("DeleteReply", "Store", FormMethod.Post, new { id = "modify-store-info", enctype = "multipart/form-data" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        {
+                                            Model.newReply.Creater = reply.Creater;
+                                            Model.newReply.Context = reply.Context;
+                                            Model.newReply.StoreGuid = reply.StoreGuid;
+                                            Model.newReply.RecordTime = reply.RecordTime;
+                                        }
+                                        @Html.HiddenFor(model => model.newReply.Creater);
+                                        @Html.HiddenFor(model => model.newReply.Context);
+                                        @Html.HiddenFor(model => model.newReply.StoreGuid);
+                                        @Html.HiddenFor(model => model.newReply.RecordTime);
+                                        <input type="submit" value="刪除" class="btn btn-danger" />
+                                    }
+                                </div>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

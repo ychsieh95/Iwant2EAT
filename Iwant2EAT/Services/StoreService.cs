@@ -13,7 +13,8 @@ namespace Iwant2EAT.Services
             var reader = new System.Data.SqlClient.SqlCommand(@"SELECT * FROM Store;", connection).ExecuteReader();
 
             List<Models.Store> stores = new List<Models.Store>();
-            Services.CollectService ls = new CollectService();
+            List<Models.Collect> collects = new Services.CollectService().LoadAllCollect();
+            List<Models.lReply> replys = new Services.ReplyServices().LoadAllReply();
             while (reader.Read())
             {
                 stores.Add(new Models.Store()
@@ -30,6 +31,7 @@ namespace Iwant2EAT.Services
                     ImageUrl = reader["ImageUrl"].ToString(),
                     Creater = reader["Creater"].ToString(),
                     Guid = reader["Guid"].ToString(),
+
                     Sunday = !reader["DayOff"].ToString().Contains("0;"),
                     Monday = !reader["DayOff"].ToString().Contains("1;"),
                     Tuesday = !reader["DayOff"].ToString().Contains("2;"),
@@ -37,8 +39,11 @@ namespace Iwant2EAT.Services
                     Thursday = !reader["DayOff"].ToString().Contains("4;"),
                     Friday = !reader["DayOff"].ToString().Contains("5;"),
                     Saturday = !reader["DayOff"].ToString().Contains("6;"),
-                    Collect = !string.IsNullOrEmpty(Username) && (ls.LoadAllCollect().Find(x => x.Username.Equals(Username) && x.Guid.Equals(reader["Guid"].ToString())) != null),
-                    CollectCount = ls.LoadAllCollect().FindAll(x=>x.Guid.Equals(reader["Guid"].ToString())).Count
+
+                    IsCollect = !string.IsNullOrEmpty(Username) && (collects.Find(x => x.Username.Equals(Username) && x.Guid.Equals(reader["Guid"].ToString())) != null),
+                    CollectCount = collects.FindAll(x => x.Guid.Equals(reader["Guid"].ToString())).Count,
+                    IsReply = !string.IsNullOrEmpty(Username) && (replys.Find(x => x.Creater.Equals(Username) && x.StoreGuid.Equals(reader["Guid"].ToString())) != null),
+                    ReplyCount = replys.FindAll(x => x.StoreGuid.Equals(reader["Guid"].ToString())).Count
                 });
             }
             connection.Close();
@@ -74,11 +79,11 @@ namespace Iwant2EAT.Services
 
         }
 
-        public bool DeleteStore(string storeGuid)
+        public bool DeleteStore(string Guid)
         {
             var connection = new System.Data.SqlClient.SqlConnection(@"Data Source=.; Initial Catalog=Iwant2EAT; Integrated Security=True");
             connection.Open();
-            return (new System.Data.SqlClient.SqlCommand(string.Format("DELETE FROM Store WHERE Guid='{0}';", storeGuid),
+            return (new System.Data.SqlClient.SqlCommand(string.Format("DELETE FROM Store WHERE Guid='{0}';", Guid),
                                                          connection).ExecuteNonQuery() > 0);
         }
     }

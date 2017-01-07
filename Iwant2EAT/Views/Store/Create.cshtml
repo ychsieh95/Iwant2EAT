@@ -20,35 +20,35 @@
 
                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                     <div class="form-group">
-                        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <label class="control-label col-md-2">店家名稱</label>
                         <div class="col-md-10">
                             @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @type = "text", @class = "form-control", @placeholder = "店家名稱，不可空白" } })
                             @Html.ValidationMessageFor(model => model.Name, "", new { @type = "text", @class = "text-danger" })
                         </div>
                     </div>
                     <div class="form-group">
-                        @Html.LabelFor(model => model.Branch, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <label class="control-label col-md-2">分店名稱</label>
                         <div class="col-md-10">
                             @Html.EditorFor(model => model.Branch, new { htmlAttributes = new { @type = "text", @class = "form-control", @placeholder = "分店名稱，若無請留白" } })
                             @Html.ValidationMessageFor(model => model.Branch, "", new { @type = "text", @class = "text-danger" })
                         </div>
                     </div>
                     <div class="form-group">
-                        @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <label class="control-label col-md-2">用餐類型</label>
                         <div class="col-md-10">
-                            @Html.EditorFor(model => model.Type, new { htmlAttributes = new { @type = "text", @class = "form-control", @placeholder = "用餐類型，如：吃到飽、火鍋、簡餐、燒肉等" } })
+                            @Html.EditorFor(model => model.Type, new { htmlAttributes = new { @type = "text", @class = "form-control", @placeholder = "如：吃到飽、火鍋、簡餐、燒肉等" } })
                             @Html.ValidationMessageFor(model => model.Type, "", new { @type = "text", @class = "text-danger" })
                         </div>
                     </div>
                     <div class="form-group">
-                        @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <label class="control-label col-md-2">聯絡電話</label>
                         <div class="btn-group col-md-10">
-                            @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @type = "tel", @class = "form-control", @placeholder = "店家聯絡電話，若無請留白" } })
+                            @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @type = "tel", @class = "form-control", @placeholder = "若無請留白" } })
                             @Html.ValidationMessageFor(model => model.Phone, "", new { @type = "tel", @class = "text-danger" })
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="control-label col-md-2">DayOn</label>
+                        <label class="control-label col-md-2">營業時間</label>
                         <div class="col-md-10 btn-group" data-toggle="buttons">
                             <span class="button-checkbox">
                                 <button type="button" class="btn" data-color="primary">Sunday</button>
@@ -88,28 +88,28 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        @Html.LabelFor(model => model.OpeningTime, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <label class="control-label col-md-2">營業時間 (起)</label>
                         <div class="col-md-10">
                             @Html.EditorFor(model => model.OpeningTime, new { htmlAttributes = new { @type = "time", @class = "form-control" } })
                             @Html.ValidationMessageFor(model => model.OpeningTime, "", new { @type = "time", @class = "text-danger" })
                         </div>
                     </div>
                     <div class="form-group">
-                        @Html.LabelFor(model => model.ClosingTime, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <label class="control-label col-md-2">營業時間 (訖)</label>
                         <div class="col-md-10">
                             @Html.EditorFor(model => model.ClosingTime, new { htmlAttributes = new { @type = "time", @class = "form-control" } })
                             @Html.ValidationMessageFor(model => model.ClosingTime, "", new { @type = "time", @class = "text-danger" })
                         </div>
                     </div>
                     <div class="form-group">
-                        @Html.LabelFor(model => model.Address, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <label class="control-label col-md-2">店家地址</label>
                         <div class="col-md-10">
                             @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @type = "text", @class = "form-control", @placeholder = "店家地址" } })
                             @Html.ValidationMessageFor(model => model.Address, "", new { @type = "text", @class = "text-danger" })
                         </div>
                     </div>
                     <div class="form-group">
-                        @Html.LabelFor(model => model.Introduction, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <label class="control-label col-md-2">店家介紹</label>
                         <div class="col-md-10">
                             @Html.EditorFor(model => model.Introduction, new { htmlAttributes = new { @type = "text", @class = "form-control", @placeholder = "店家介紹" } })
                             @Html.ValidationMessageFor(model => model.Introduction, "", new { @type = "text", @class = "text-danger" })

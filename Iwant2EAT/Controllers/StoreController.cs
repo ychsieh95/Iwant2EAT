@@ -175,9 +175,15 @@ namespace Iwant2EAT.Controllers
                     }
                     // Delete collect
                     Services.CollectService cs = new Services.CollectService();
-                    foreach (Models.Collect collect in cs.LoadAllCollect().FindAll(x => x.Guid.Equals(Guid)))
+                    foreach (Models.Collect collect in new Services.CollectService().LoadAllCollect().FindAll(x => x.Guid.Equals(Guid)))
                     {
                         cs.DeleteCollect(collect);
+                    }
+                    // Delete reply
+                    Services.ReplyServices rs = new Services.ReplyServices();
+                    foreach (Models.lReply reply in new Services.ReplyServices().LoadAllReply().FindAll(x => x.StoreGuid.Equals(Guid)))
+                    {
+                        rs.DeleteReply(reply);
                     }
                     TempData["DeleteStoreHtml"] = string.Format("<div class=\"alert alert-success\" role=\"alert\">[success] 刪除 {0}{1} 資訊成功！</div>",
                                                                 store.Name, string.IsNullOrEmpty(store.Branch) ? "" : string.Format("({0})", store.Branch));
@@ -204,6 +210,11 @@ namespace Iwant2EAT.Controllers
                 Services.StoreService ss = new Services.StoreService();
                 Models.Store store = 
                     ss.LoadAllStore(Session["Username"] == null ? "" : Session["Username"].ToString()).Find(x => x.Guid.Equals(Guid));
+
+                if (store == null)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
 
                 ViewBag.IsCreater = false;
                 if (Session["Username"] != null)
@@ -308,7 +319,7 @@ namespace Iwant2EAT.Controllers
             }
             else
             {
-                List<Models.Store> stores = new Services.StoreService().LoadAllStore(Session["Username"].ToString()).FindAll(x => x.Collect);
+                List<Models.Store> stores = new Services.StoreService().LoadAllStore(Session["Username"].ToString()).FindAll(x => x.IsCollect);
                 if (stores.Count > 0)
                 {
                     ViewBag.DayOfWeek = ((int)DateTime.Now.DayOfWeek).ToString();
@@ -320,6 +331,92 @@ namespace Iwant2EAT.Controllers
                     return View();
                 }
             }
+        }
+
+        [HttpGet]
+        public ActionResult Reply(string StoreGuid)
+        {
+            if (string.IsNullOrEmpty(StoreGuid))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            Models.Store store = new Services.StoreService().LoadAllStore().Find(x => x.Guid.Equals(StoreGuid));
+            if (store == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                ViewBag.StoreName = store.Name;
+                ViewBag.BranchName = store.Branch;
+                return View(new Models.Reply()
+                {
+                    Replys = new Services.ReplyServices().LoadAllReply().FindAll(x => x.StoreGuid.Equals(StoreGuid)),
+                    newReply = new Models.lReply()
+                    {
+                        StoreGuid = StoreGuid
+                    }
+                });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateReply(Models.Reply reply)
+        {
+            if (Session["Username"] == null)
+            {
+                TempData["CreateReplyHtml"] = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 登入後才可使用留言功能！</div>";
+                return RedirectToAction("Reply", new { Guid = reply.newReply.StoreGuid });
+            }
+            else
+            {
+                reply.newReply.Creater = Session["Username"].ToString();
+                reply.newReply.RecordTime = DateTime.Now;
+            }
+            string checkFormat = reply.newReply.CheckReplyFormat();
+            if (!string.IsNullOrEmpty(checkFormat))
+            {
+                TempData["CreateReplyHtml"] = checkFormat;
+            }
+            else
+            {
+                Services.ReplyServices rs = new Services.ReplyServices();
+                if (rs.AddReply(reply.newReply))
+                {
+                    TempData["CreateReplyHtml"] = "<div class=\"alert alert-success\" role=\"alert\">[Success] 留言成功！</div>";
+                }
+                else
+                {
+                    TempData["CreateReplyHtml"] = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 留言失敗！</div>";
+                }
+            }
+            return RedirectToAction("Reply", new { StoreGuid = reply.newReply.StoreGuid });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteReply(Models.Reply reply)
+        {
+            if (Session["Username"] == null || !Session["Username"].ToString().Equals(reply.newReply.Creater))
+            {
+                TempData["CreateReplyHtml"] = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 權限不足，無法刪除此留言！</div>";
+            }
+            else
+            {
+                reply.newReply.Creater = Session["Username"].ToString();
+                Services.ReplyServices rs = new Services.ReplyServices();
+                if (rs.DeleteReply(reply.newReply))
+                {
+                    TempData["DeleteReplyHtml"] = "<div class=\"alert alert-success\" role=\"alert\">[Success] 留言刪除成功！</div>";
+                }
+                else
+                {
+                    TempData["DeleteReplyHtml"] = "<div class=\"alert alert-danger\" role=\"alert\">[Failure] 留言刪除失敗！</div>";
+                }
+            }
+            return RedirectToAction("Reply", new { StoreGuid = reply.newReply.StoreGuid });
         }
     }
 }

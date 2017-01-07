@@ -35,8 +35,11 @@ namespace Iwant2EAT.Models
 
         public string Guid { get; set; }
 
-        public bool Collect { get; set; }
+        public bool IsCollect { get; set; }
         public int CollectCount { get; set; }
+
+        public bool IsReply { get; set; }
+        public int ReplyCount { get; set; }
 
 
         public string CheckStoreFormat()
