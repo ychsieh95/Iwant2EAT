@@ -32,23 +32,25 @@
         </table>
         <hr />
 
-        @if (Session["Username"] != null)
-        {
-            using (Html.BeginForm("CreateReply", "Store", FormMethod.Post, new { id = "modify-store-info", enctype = "multipart/form-data" }))
+        <div>
+            @if (Session["Username"] != null)
             {
-                @Html.AntiForgeryToken()
-                @Html.LabelFor(model => model.newReply.Context, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-8">
-                    @Html.EditorFor(model => model.newReply.Context, new { htmlAttributes = new { @type = "text", @class = "form-control", @placeholder = "此處可輸入新留言", @maxlength = "50" } })
-                    @Html.ValidationMessageFor(model => model.newReply.Context, "", new { @type = "text", @class = "text-danger" })
-                    @Html.HiddenFor(model => model.newReply.StoreGuid)
-                </div>
-                <div class="col-md-2">
-                    <input type="submit" value="留言" class="btn btn-primary" />
-                </div>
+                using (Html.BeginForm("CreateReply", "Store", FormMethod.Post, new { id = "modify-store-info", enctype = "multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <label class="control-label col-md-2">請輸入留言：</label>
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.newReply.Context, new { htmlAttributes = new { @type = "text", @class = "form-control", @placeholder = "此處可輸入新留言", @maxlength = "50" } })
+                        @Html.ValidationMessageFor(model => model.newReply.Context, "", new { @type = "text", @class = "text-danger" })
+                        @Html.HiddenFor(model => model.newReply.StoreGuid)
+                    </div>
+                    <div class="col-md-2">
+                        <input type="submit" value="留言" class="btn btn-primary" />
+                    </div>
+                }
             }
-            <hr />
-        }
+            <br /><br /><br />
+        </div>
         <table class="table table-striped">
             <thead>
                 <tr>

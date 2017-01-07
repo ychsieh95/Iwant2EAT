@@ -98,11 +98,11 @@
             @if (Session["Username"] != null)
             {
                 <a href="@Url.Action("Collect", "Store", new { Guid = Model.Guid, Collect = !Model.IsCollect })" class="btn btn-default" style="text-align: right">
-                    <img src="~/@(Model.IsCollect ? "Content/Resources/star.png" : "Content/Resources/star_empty.png")" width="30" height="30" style="display: inline-block;" />
+                    <img src="~/@(Model.IsCollect ? "Content/Resources/star.png" : "Content/Resources/star_empty.png")" width="20" height="20" style="display: inline-block;" />
                     <span class="badge"> @Model.CollectCount</span>
                 </a>
                 <a href="@Url.Action("Reply", "Store", new { StoreGuid = Model.Guid })" class="btn btn-default" style="text-align: right">
-                    <img src="~/@(Model.IsReply ? "Content/Resources/reply_full.png" : "Content/Resources/reply_line.png")" width="30" height="30" style="display: inline-block;" />
+                    <img src="~/@(Model.IsReply ? "Content/Resources/reply_full.png" : "Content/Resources/reply_line.png")" width="20" height="20" style="display: inline-block;" />
                     <span class="badge"> @Model.ReplyCount</span>
                 </a>
             }
