@@ -37,14 +37,25 @@
                     <div style="float: right;">
                         @if (Session["Username"] != null)
                         {
-                            <a href="@Url.Action("Collect", "Store", new { Guid = Model[i].Guid, Collect = !Model[i].IsCollect, Rurl = "Home/Index"})" class="btn btn-default" style="text-align: right">
-                                <img src="~/@(Model[i].IsCollect ? "Content/Resources/star.png" : "Content/Resources/star_empty.png")" width="30" height="30" style="display: inline-block;" />
-                                <span class="badge"> @Model[i].CollectCount</span>
-                            </a>
-                            <a href="@Url.Action("Reply", "Store", new { StoreGuid = Model[i].Guid })" class="btn btn-default" style="text-align: right">
-                                <img src="~/@(Model[i].IsReply ? "Content/Resources/reply_full.png" : "Content/Resources/reply_line.png")" width="30" height="30" style="display: inline-block;" />
-                                <span class="badge"> @Model[i].ReplyCount</span>
-                            </a>
+                            <div class="btn-group" role="group">
+                                <a href="@Url.Action("Collect", "Store", new { Guid = Model[i].Guid, Collect = !Model[i].IsCollect, Rurl = "Home/Index" })" class="btn btn-default" style="text-align: right">
+                                    <img src="~/@(Model[i].IsCollect ? "Content/Resources/star.png" : "Content/Resources/star_empty.png")" width="30" height="30" style="display: inline-block;" />
+                                    <span class="badge"> @Model[i].CollectCount</span>
+                                </a>
+                                <a href="@Url.Action("Reply", "Store", new { StoreGuid = Model[i].Guid })" class="btn btn-default" style="text-align: right">
+                                    <img src="~/@(Model[i].IsReply ? "Content/Resources/reply_full.png" : "Content/Resources/reply_line.png")" width="30" height="30" style="display: inline-block;" />
+                                    <span class="badge"> @Model[i].ReplyCount</span>
+                                </a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="btn-group" role="group">
+                                <a href="@Url.Action("Reply", "Store", new { StoreGuid = Model[i].Guid })" class="btn btn-default" style="text-align: right">
+                                    <img src="~/Content/Resources/reply_line.png" width="30" height="30" style="display: inline-block;" />
+                                    <span class="badge"> @Model[i].ReplyCount</span>
+                                </a>
+                            </div>
                         }
                     </div>
                     <table class="table table-striped" style="width: 100%;">

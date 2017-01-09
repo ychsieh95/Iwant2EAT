@@ -9,14 +9,24 @@
     @(new HtmlString(ViewBag.SearchHtml))
 </div>
 
-<ul class="nav nav-pills nav-justified">
-    <li role="presentation" class="@ViewBag.Name"><a href="@Url.Action("Search", new { Keyword = ViewBag.Keyword, Findway = "Name" })">店家名稱 <span class="badge">@ViewBag.NameCount</span></a></li>
-    <li role="presentation" class="@ViewBag.Branch"><a href="@Url.Action("Search", new { Keyword = ViewBag.Keyword, Findway = "Branch" })">分店名稱 <span class="badge">@ViewBag.BranchCount</span></a></li>
-    <li role="presentation" class="@ViewBag.Type"><a href="@Url.Action("Search", new { Keyword = ViewBag.Keyword, Findway = "Type" })">用餐類型 <span class="badge">@ViewBag.TypeCount</span></a></li>
-    <li role="presentation" class="@ViewBag.Address"><a href="@Url.Action("Search", new { Keyword = ViewBag.Keyword, Findway = "Address" })">地址 <span class="badge">@ViewBag.AddressCount</span></a></li>
-</ul>
-<hr />
 <div class="row">
+    @if (Session["Username"] != null)
+    {
+        <h4 align="center"><strong>搜尋資料來源</strong></h4>
+        <ul class="nav nav-pills nav-justified">
+            <li role="presentation" class="@ViewBag.AllStore"><a href="@Url.Action("Search", new { Keyword = ViewBag.Keyword, Condition = ViewBag.Condition, Source = "AllStore" })">所有店家 <span class="badge">@ViewBag.AllStoreCount</span></a></li>
+            <li role="presentation" class="@ViewBag.MyStore"><a href="@Url.Action("Search", new { Keyword = ViewBag.Keyword, Condition = ViewBag.Condition, Source = "MyStore" })">我的店家 <span class="badge">@ViewBag.MyStoreCount</span></a></li>
+            <li role="presentation" class="@ViewBag.MyCollect"><a href="@Url.Action("Search", new { Keyword = ViewBag.Keyword, Condition = ViewBag.Condition, Source = "MyCollect" })">我的收藏 <span class="badge">@ViewBag.MyCollectCount</span></a></li>
+        </ul>
+    }
+    <h4 align="center"><strong>搜尋資料條件</strong></h4>
+    <ul class="nav nav-pills nav-justified">
+        <li role="presentation" class="@ViewBag.Name"><a href="@Url.Action("Search", new { Keyword = ViewBag.Keyword, Condition = "Name", Source = ViewBag.Source })">店家名稱 <span class="badge">@ViewBag.NameCount</span></a></li>
+        <li role="presentation" class="@ViewBag.Branch"><a href="@Url.Action("Search", new { Keyword = ViewBag.Keyword, Condition = "Branch", Source = ViewBag.Source })">分店名稱 <span class="badge">@ViewBag.BranchCount</span></a></li>
+        <li role="presentation" class="@ViewBag.Type"><a href="@Url.Action("Search", new { Keyword = ViewBag.Keyword, Condition = "Type", Source = ViewBag.Source })">用餐類型 <span class="badge">@ViewBag.TypeCount</span></a></li>
+        <li role="presentation" class="@ViewBag.Address"><a href="@Url.Action("Search", new { Keyword = ViewBag.Keyword, Condition = "Address", Source = ViewBag.Source })">地址 <span class="badge">@ViewBag.AddressCount</span></a></li>
+    </ul>
+    <hr />
     @for (int i = 0; Model != null && i < Model.Count; i++)
     {
         <div class="col-xs-12 col-sm-6 col-md-3">
@@ -29,20 +39,25 @@
                     <div style="float: right;">
                         @if (Session["Username"] != null)
                         {
-                            if (Model[i].Collect)
-                            {
-                                <a href="@Url.Action("Collect", "Store", new { Guid = Model[i].Guid, Collect = false, Rurl = "Home/Index"})" class="btn btn-primary" style="text-align: right">
-                                    <img src="~/Content/Resources/star.png" width="30" height="30" style="display: inline-block;" />
+                            <div class="btn-group" role="group">
+                                <a href="@Url.Action("Collect", "Store", new { Guid = Model[i].Guid, Collect = !Model[i].IsCollect, Rurl = "Home/Search"})" class="btn btn-default" style="text-align: right">
+                                    <img src="~/@(Model[i].IsCollect ? "Content/Resources/star.png" : "Content/Resources/star_empty.png")" width="30" height="30" style="display: inline-block;" />
                                     <span class="badge"> @Model[i].CollectCount</span>
                                 </a>
-                            }
-                            else
-                            {
-                                <a href="@Url.Action("Collect", "Store", new { Guid = Model[i].Guid, Collect = true, Rurl = "Home/Index"})" class="btn btn-default" style="text-align: right">
-                                    <img src="~/Content/Resources/star_empty.png" width="30" height="30" style="display: inline-block;" />
-                                    <span class="badge"> @Model[i].CollectCount</span>
+                                <a href="@Url.Action("Reply", "Store", new { StoreGuid = Model[i].Guid })" class="btn btn-default" style="text-align: right">
+                                    <img src="~/@(Model[i].IsReply ? "Content/Resources/reply_full.png" : "Content/Resources/reply_line.png")" width="30" height="30" style="display: inline-block;" />
+                                    <span class="badge"> @Model[i].ReplyCount</span>
                                 </a>
-                            }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="btn-group" role="group">
+                                <a href="@Url.Action("Reply", "Store", new { StoreGuid = Model[i].Guid })" class="btn btn-default" style="text-align: right">
+                                    <img src="~/Content/Resources/reply_line.png" width="30" height="30" style="display: inline-block;" />
+                                    <span class="badge"> @Model[i].ReplyCount</span>
+                                </a>
+                            </div>
                         }
                     </div>
                     <table class="table table-striped" style="width: 100%;">

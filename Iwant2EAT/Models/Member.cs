@@ -13,6 +13,8 @@ namespace Iwant2EAT.Models
         public DateTime LastLogin { get; set; }
         public string LastIpAdr { get; set; }
 
+        public string Rurl { get; set; }
+
         /// <summary>
         /// 檢查是否為正確的 Member 格式，正確則回傳 null，錯誤則回傳 HTML 標籤
         /// </summary>

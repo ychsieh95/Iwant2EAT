@@ -8,7 +8,7 @@ namespace Iwant2EAT.Controllers
     public class MemberController : Controller
     {
         [HttpGet]
-        public ActionResult Register()
+        public ActionResult Register(string Rurl)
         {
             return View();
         }
@@ -37,7 +37,14 @@ namespace Iwant2EAT.Controllers
                 {
                     Session.Add("Username", member.Username);
                     ViewBag.AddMemberHTML = "<div class=\"alert alert-success\" role=\"alert\">[Success] 帳號註冊成功！</div>";
-                    return Redirect("/Home/Index");
+                    if (string.IsNullOrEmpty(member.Rurl))
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else
+                    {
+                        return Redirect(member.Rurl);
+                    }
                 }
                 else
                 {
@@ -66,8 +73,9 @@ namespace Iwant2EAT.Controllers
         }
 
         [HttpGet]
-        public ActionResult Login()
+        public ActionResult Login(string Rurl)
         {
+            ViewBag.Rurl = Rurl;
             return View();
         }
 
@@ -94,7 +102,14 @@ namespace Iwant2EAT.Controllers
                 // Update login time and ip
                 ms.UpdateMember(string.Format("LastLogin='{0}', LastIpAdr='{1}'", member.LastLogin.ToString("yyyy/MM/dd HH:mm:ss"), member.LastIpAdr), string.Format("Username='{0}'", member.Username));
                 Session.Add("Username", member.Username);
-                return Redirect("/Home/Index");
+                if (string.IsNullOrEmpty(member.Rurl))
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    return Redirect(member.Rurl);
+                }
             }
             else
             {
@@ -112,10 +127,17 @@ namespace Iwant2EAT.Controllers
         }
 
         [HttpGet]
-        public ActionResult Logout()
+        public ActionResult Logout(string Rurl)
         {
             Session.Clear();
-            return Redirect("/Home/Index");
+            if (string.IsNullOrEmpty(Rurl))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                return Redirect(Rurl);
+            }
         }
 
         [HttpGet]

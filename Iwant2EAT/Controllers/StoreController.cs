@@ -295,6 +295,7 @@ namespace Iwant2EAT.Controllers
             }
             else
             {
+                ViewBag.Source = "MyStore";
                 Services.StoreService ss = new Services.StoreService();
                 List<Models.Store> stores = ss.LoadAllStore(Session["Username"].ToString()).FindAll(x => x.Creater.Equals(Session["Username"].ToString()));
                 if (stores.Count > 0)
@@ -319,6 +320,7 @@ namespace Iwant2EAT.Controllers
             }
             else
             {
+                ViewBag.Source = "MyCollect";
                 List<Models.Store> stores = new Services.StoreService().LoadAllStore(Session["Username"].ToString()).FindAll(x => x.IsCollect);
                 if (stores.Count > 0)
                 {
